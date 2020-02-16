@@ -59,7 +59,7 @@ public class ASSData {
         }
     }
 
-    //Uses baseLenLong, baseAngleLong, sideAngleLong
+    //Law of sines. Initializes only baseLenLong, baseAngleLong, sideAngleLong.
     private void solve1Sides() {
         double sideAngleLong_Radian = Math.asin(sideLen * Math.sin(SWING_ANGLE_RADIAN) / swingLen);
         sideAngleLong = sideAngleLong_Radian * 180 / Math.PI;
@@ -70,7 +70,7 @@ public class ASSData {
         baseLenLong = Math.sin(baseAngleLong_Radian) * swingLen / Math.sin(SWING_ANGLE_RADIAN);
     }
 
-    //Use law of sines to fill in the rest
+    //Law of sines to initialize the rest
     private void solve2Sides() {
         double sideAngleLong_Radian = Math.asin(sideLen * Math.sin(SWING_ANGLE_RADIAN) / swingLen);
         double sideAngleShort_Radian = (Math.PI - sideAngleLong_Radian);
