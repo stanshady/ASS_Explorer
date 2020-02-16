@@ -1,0 +1,334 @@
+package ASSExplorer;
+
+import javafx.scene.Cursor;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.*;
+import javafx.scene.transform.Rotate;
+
+public class ASSInteract extends Pane {
+
+    private double xCenter, yCenter;
+    private double sideLen, swingLen;
+
+    private Line base, side, swing, shortGreen, longGreen, altitude;
+    private Circle circle;
+    private Rectangle rectangle, shortSwingRectangle,rightAngleRectangle;
+    private double angle, rectangleAngle;
+
+    private boolean dragOn;
+
+    ASSInteract(double angle, double sideLen, double swingLen){
+        dragOn = false;
+
+        setPrefSize(800, 800);
+
+        //ASS inputs
+        this.angle = angle;
+        this.sideLen = sideLen;
+        this.swingLen = swingLen;
+
+        //time to calculate shit.
+        //probably make own class for this later.
+        double yMin, yMax, xMin, xMax, yWidth, xWidth, scaleFactor;
+        double angleRad = angle * Math.PI / 180;
+
+        yMin = Math.min(0, sideLen * Math.sin(angleRad) - swingLen);
+        yMax = sideLen * Math.sin(angleRad) + swingLen;
+        yWidth = yMax - yMin;
+
+        xMin = Math.min(0, sideLen * Math.cos(angleRad) - swingLen);
+        xMax = Math.max(0, sideLen * Math.cos(angleRad) + swingLen);
+        xWidth = xMax - xMin;
+
+        scaleFactor = 720 / Math.max(xWidth, yWidth);
+
+        base = new Line();
+        if (xMin == 0) {
+            base.setStartX(50);
+        } else
+            base.setStartX(-1 * xMin * scaleFactor + 50);
+
+        if (yMin == 0) {
+            base.setStartY(750);
+        } else
+            base.setStartY(750 + yMin * scaleFactor);
+
+        base.setEndX(780);
+        base.setEndY(base.getStartY());
+
+
+        side = new Line(base.getStartX(),
+                base.getStartY(),
+                base.getStartX() + sideLen * scaleFactor * Math.cos(angleRad),
+                base.getStartY() - sideLen * scaleFactor * Math.sin(angleRad));
+
+        swing = new Line(side.getEndX(),
+                side.getEndY(),
+                side.getEndX() + swingLen * scaleFactor,
+                side.getEndY());
+
+
+        altitude = new Line(swing.getStartX(),
+                swing.getStartY(),
+                swing.getStartX(),
+                base.getStartY());
+        altitude.setStroke(Color.ORANGE);
+        altitude.setStrokeWidth(3);
+        altitude.setOpacity(0);
+
+        rightAngleRectangle = new Rectangle(altitude.getEndX(),altitude.getEndY()-10,10,10);
+        rightAngleRectangle.setFill(null);
+        rightAngleRectangle.setStroke(Color.ORANGE);
+        rightAngleRectangle.setStrokeWidth(2);
+        rightAngleRectangle.setOpacity(0);
+
+
+
+        double deltaY = swing.getStartY() - base.getStartY();
+        double deltaX = Math.sqrt(swingLen * scaleFactor * swingLen * scaleFactor - deltaY * deltaY);
+        longGreen = new Line(base.getStartX(),
+                base.getStartY(),
+                swing.getStartX() + deltaX,
+                base.getStartY());
+
+        longGreen.setStroke(Color.GREEN);
+        longGreen.setOpacity(0);
+        longGreen.setStrokeWidth(3);
+
+        //Law of sines and such to find values
+        double angleRadian = angle * Math.PI / 180;
+        double acuteOppositeSide = Math.asin(Math.sin(angleRadian) * sideLen / swingLen);
+        double obtuseOppositeSide = Math.PI - acuteOppositeSide;
+        double shortGreenXDelta = Math.sin(Math.PI - angleRadian - obtuseOppositeSide) * sideLen * scaleFactor / Math.sin(obtuseOppositeSide);
+
+
+        shortGreen = new Line(base.getStartX(),
+                base.getStartY(),
+                base.getStartX() + shortGreenXDelta,
+                base.getStartY());
+
+        shortGreen.setStroke(Color.GREEN);
+        shortGreen.setStrokeWidth(3);
+        shortGreen.setOpacity(0);
+
+        //shortSwingRectangle is a linear extension of swing.
+        // Used for the shortGreen intersection hold feeling.
+        shortSwingRectangle = new Rectangle(swing.getStartX(), swing.getStartY(), 2000, 30);
+        double angleRotateShortRectangle = obtuseOppositeSide;
+
+        double angleNormalShort = angleRotateShortRectangle + Math.PI * 0.5;
+
+        //readjust along the perpendicular
+        //had to use setLayoutX/Y.  setX() and setY() had
+        //funny behavior.
+        shortSwingRectangle.setLayoutX(-1 * shortSwingRectangle.getHeight() * 0.5 * Math.cos(angleNormalShort));
+        shortSwingRectangle.setLayoutY(-1 * shortSwingRectangle.getHeight() * 0.5 * Math.sin(angleNormalShort));
+
+        Rotate rotateShort = new Rotate(angleRotateShortRectangle * 180 / Math.PI, swing.getStartX(), swing.getStartY());
+        shortSwingRectangle.getTransforms().addAll(rotateShort);
+
+        shortSwingRectangle.setOpacity(0);
+
+        shortSwingRectangle.setOnMouseDragEntered(event -> {
+            if (shortGreen.getEndX() <= base.getStartX())
+                return;
+            shortGreen.setOpacity(1);
+            base.setOpacity(0);
+            circle.setCenterX(shortGreen.getEndX());
+            circle.setCenterY(shortGreen.getEndY());
+
+        });
+
+        shortSwingRectangle.setOnMouseDragOver(event -> {
+            if (shortGreen.getEndX() <= base.getStartX())
+                return;
+            circle.setCenterX(shortGreen.getEndX());
+            circle.setCenterY(shortGreen.getEndY());
+
+        });
+
+        shortSwingRectangle.setOnMouseDragExited(event -> {
+            shortGreen.setOpacity(0);
+            base.setOpacity(1);
+
+            if (dragOn)
+                event.consume();
+                //testing
+            else
+                checkIntersection();
+        });
+
+        //rectangle is a linear extension of swing.
+        // Used for the longGreen intersection hold feeling.
+        rectangle = new Rectangle(swing.getStartX(), swing.getStartY(), 2000, 30);
+
+        rectangleAngle = -1 * Math.atan((longGreen.getEndY() - swing.getStartY()) / (longGreen.getEndX() - swing.getStartX()));
+
+        double normalAngle = rectangleAngle + Math.PI * 0.5;
+
+        //readjust along the perpendicular
+        //had to use setLayoutX/Y.  setX() and setY() had
+        //funny behavior.
+        rectangle.setLayoutX(rectangle.getHeight() * 0.5 * Math.cos(normalAngle));
+        rectangle.setLayoutY(-1 * rectangle.getHeight() * 0.5 * Math.sin(normalAngle));
+
+        Rotate rotate = new Rotate(-1 * rectangleAngle * 180 / Math.PI, swing.getStartX(), swing.getStartY());
+        rectangle.getTransforms().addAll(rotate);
+
+        rectangle.setOpacity(0);
+
+        rectangle.setOnMouseDragEntered(event -> {
+            if (longGreen.getEndX() <= base.getStartX())
+                return;
+            longGreen.setOpacity(1);
+            base.setOpacity(0);
+            circle.setCenterX(longGreen.getEndX());
+            circle.setCenterY(longGreen.getEndY());
+        });
+
+        rectangle.setOnMouseDragOver(event -> {
+            if (longGreen.getEndX() <= base.getStartX())
+                return;
+            circle.setCenterX(longGreen.getEndX());
+            circle.setCenterY(longGreen.getEndY());
+
+        });
+
+        rectangle.setOnMouseDragExited(event -> {
+            longGreen.setOpacity(0);
+            base.setOpacity(1);
+
+            if (dragOn)
+                event.consume();
+                //testing
+            else
+                checkIntersection();
+        });
+
+        base.getStrokeDashArray().addAll(20d, 10d);
+
+        swing.setStrokeWidth(3);
+        side.setStrokeWidth(3);
+
+        swing.setStroke(Color.RED);
+        side.setStroke(Color.BLUE);
+
+
+        circle = new Circle(swing.getEndX(), swing.getEndY(), 7);
+
+        swing.endXProperty().bind(circle.centerXProperty());
+        swing.endYProperty().bind(circle.centerYProperty());
+
+        circle.setCursor(Cursor.HAND);
+
+        circle.setOnMousePressed(event -> {
+            //testing
+            dragOn = true;
+
+            //when mouse is pressed, store initial position
+            xCenter = circle.getTranslateX();
+            yCenter = circle.getTranslateY();
+            circle.setMouseTransparent(true);
+        });
+
+        circle.setOnMouseReleased(event -> {
+            circle.setMouseTransparent(false);
+
+            //testing
+            dragOn = false;
+
+            checkIntersection();
+        });
+
+
+        circle.setOnMouseDragged(event -> {
+            double xDiff = event.getSceneX() - swing.getStartX();
+            double yDiff = event.getSceneY() - swing.getStartY();
+            double hypotenuse = Math.sqrt(yDiff * yDiff + xDiff * xDiff);
+
+            circle.setCenterX(swing.getStartX() + swingLen * scaleFactor * xDiff / hypotenuse);
+            circle.setCenterY(swing.getStartY() + swingLen * scaleFactor * yDiff / hypotenuse);
+        });
+
+        circle.setOnMouseEntered(event -> {
+            //change the z-coordinate of the circle
+            circle.toFront();
+            circle.setOpacity(1);
+        });
+
+        //this is vital. Learn more about it
+        circle.setOnDragDetected(event -> {
+            circle.startFullDrag();
+        });
+
+
+        //testing
+        Arc arc = new Arc();
+        arc.setCenterX(base.getStartX());
+        arc.setCenterY(base.getStartY());
+        arc.setRadiusX(30.0f);
+        arc.setRadiusY(30.0f);
+        arc.setStartAngle(0);
+        arc.setLength(angle);
+        arc.setType(ArcType.OPEN);
+        arc.setFill(null);
+        arc.setStroke(Color.RED);
+        arc.setStrokeWidth(4);
+
+
+        getChildren().addAll(arc,altitude, swing, base, side, longGreen, shortGreen, circle, rectangle, shortSwingRectangle,rightAngleRectangle);
+
+
+
+
+
+    }
+
+    public void showAltitude(){
+        altitude.setOpacity(1);
+        rightAngleRectangle.setOpacity(1);
+    }
+
+
+    public void hideAltitude(){
+        altitude.setOpacity(0);
+        rightAngleRectangle.setOpacity(0);
+    }
+
+    //slick way to check shape intersection.
+    //.intersect() creates the Shape of the intersection.
+    //We check if that shape has actual width (!= -1)
+    public void checkIntersection() {
+        Shape intersectLong = Shape.intersect(circle, rectangle);
+        Shape intersectShort = Shape.intersect(circle, shortSwingRectangle);
+
+        //check longGreen intersection
+        if (intersectLong.getBoundsInLocal().getWidth() != -1) {
+            if (longGreen.getEndX() < base.getStartX())
+                return;
+            circle.setCenterX(longGreen.getEndX());
+            circle.setCenterY(longGreen.getEndY());
+            longGreen.setOpacity(1);
+            base.setOpacity(0);
+        }
+
+        //check shortGreen intersection
+        else if (intersectShort.getBoundsInLocal().getWidth() != -1) {
+            if (shortGreen.getEndX() < base.getStartX())
+                return;
+            circle.setCenterX(shortGreen.getEndX());
+            circle.setCenterY(shortGreen.getEndY());
+            shortGreen.setOpacity(1);
+            base.setOpacity(0);
+        } else {
+            longGreen.setOpacity(0);
+            base.setOpacity(1);
+        }
+    }
+
+    public double dist(Line line) {
+        return Math.sqrt((line.getEndX() - line.getStartX()) * (line.getEndX() - line.getStartX()) +
+                (line.getEndY() - line.getStartY()) * (line.getEndY() - line.getStartY()));
+    }
+}
