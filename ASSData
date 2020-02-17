@@ -1,5 +1,7 @@
 package ASSExplorer;
 
+import java.text.DecimalFormat;
+
 //Stores data (numSolutions, sides, angles, altitude, etc) for ASS
 //All data is UNSCALED!!!
 public class ASSData {
@@ -88,25 +90,31 @@ public class ASSData {
         baseLenShort = Math.sin(baseAngleShort_Radian) * swingLen / Math.sin(SWING_ANGLE_RADIAN);
     }
 
+    public String formatDecimals(double num){
+        DecimalFormat df = new DecimalFormat("#.###");
+        return df.format(num);
+    }
+
     public String toString() {
         String ret = "";
-        ret += "numSolutions = " + numSolutions + ", altitudeLen = " + altitudeLen + "\n";
+
+        ret += "numSolutions = " + numSolutions + ", altitudeLen = " + formatDecimals(altitudeLen) + "\n";
         ret += "********************\n";
         ret += "Acute Triangle:\n" +
-                "swingAngel = " + swingAngle + ", " +
-                "baseAngleLong = " + baseAngleLong + ", " +
-                "sideAngleLong = " + sideAngleLong + "\n";
-        ret += "swingLen = " + swingLen + ", " +
-                "baseLenLong = " + baseLenLong + ", " +
-                "sideLen = " + sideLen + "\n";
+                "swingAngel = " + formatDecimals(swingAngle) + ", " +
+                "baseAngleLong = " + formatDecimals(baseAngleLong) + ", " +
+                "sideAngleLong = " + formatDecimals(sideAngleLong) + "\n";
+        ret += "swingLen = " + formatDecimals(swingLen) + ", " +
+                "baseLenLong = " + formatDecimals(baseLenLong) + ", " +
+                "sideLen = " + formatDecimals(sideLen) + "\n";
         ret += "********************\n";
         ret += "Obtuse Triangle: \n";
-        ret += "swingAngel = " + swingAngle + ", " +
-                "baseAngleShort = " + baseAngleShort + ", " +
-                "sideAngleShort = " + sideAngleShort + "\n";
-        ret += "swingLen = " + swingLen + ", " +
-                "baseLenShort = " + baseLenShort + ", " +
-                "sideLen = " + sideLen + "\n";
+        ret += "swingAngel = " + formatDecimals(swingAngle) + ", " +
+                "baseAngleShort = " + formatDecimals(baseAngleShort) + ", " +
+                "sideAngleShort = " + formatDecimals(sideAngleShort) + "\n";
+        ret += "swingLen = " + formatDecimals(swingLen) + ", " +
+                "baseLenShort = " + formatDecimals(baseLenShort) + ", " +
+                "sideLen = " + formatDecimals(sideLen) + "\n";
         ret += "********************\n";
         return ret;
     }
