@@ -1,0 +1,89 @@
+package ASSExplorer;
+
+import javafx.geometry.Insets;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.transform.Rotate;
+
+import java.util.ArrayList;
+
+//Contains all Label objects (A = 37, a = 12.5, etc) for ASS
+//Communicates with ASSInteract object _interact_ by
+// passing it as a parameter in the constructor.
+public class ASSLabels {
+
+    private ArrayList<Label> labels;
+    private ASSInteract interact;
+
+    //The labels
+    private Label swingAngleLabel, sideLenLabel;
+
+
+    ASSLabels(ASSInteract interact) {
+        labels = new ArrayList<>();
+        this.interact = interact;
+
+        setUpSwingAngleLabel();
+
+        setUpSideLenLabel();
+
+    }
+
+    private void setUpSwingAngleLabel() {
+        swingAngleLabel = new Label("A");
+        swingAngleLabel.setFont(new Font(20));
+        swingAngleLabel.setTranslateX(interact.getTranslateX() + interact.getStartXBase() - 18);
+        swingAngleLabel.setTranslateY(interact.getTranslateY() + interact.getStartYBase());
+        swingAngleLabel.setOpacity(0);
+
+        labels.add(swingAngleLabel);
+    }
+
+    private void setUpSideLenLabel() {
+        sideLenLabel = new Label(String.valueOf(interact.getData().getSideLen()));
+        sideLenLabel.setFont(new Font(20));
+
+        BackgroundFill background_fill = new BackgroundFill(Color.PINK,
+                CornerRadii.EMPTY,
+                Insets.EMPTY);
+        Background background = new Background(background_fill);
+        sideLenLabel.setBackground(background);
+
+        //1st calculate midpoint of sideLen:
+        double midX = 0.5 * (interact.getSide().getEndX() - interact.getSide().getStartX());
+        double midY = 0.5 * (interact.getSide().getEndY() - interact.getSide().getStartY());
+
+        sideLenLabel.setTranslateX(interact.getTranslateX() + interact.getSide().getStartX() + midX);
+        sideLenLabel.setTranslateY(interact.getTranslateY() + interact.getSide().getStartY() + midY);
+        sideLenLabel.setOpacity(0);
+
+        Rotate rotate = new Rotate(-1 * interact.getData().getSwingAngle(),
+                sideLenLabel.getLayoutX(),
+                sideLenLabel.getLayoutY());
+        sideLenLabel.getTransforms().addAll(rotate);
+
+        labels.add(sideLenLabel);
+    }
+
+    //setters...just use setVisible()?
+    public void setSwingAngleLabelOpacity(int n) {
+        if (n != 1 && n != 0)
+            return;
+        swingAngleLabel.setOpacity(n);
+    }
+
+    public void setSideLenLabelOpacity(int n) {
+        if (n != 1 && n != 0)
+            return;
+        sideLenLabel.setOpacity(n);
+    }
+
+    public ArrayList<Label> getLabels() {
+        return labels;
+    }
+
+}
