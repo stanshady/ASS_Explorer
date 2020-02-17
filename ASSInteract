@@ -8,6 +8,7 @@ import javafx.scene.transform.Rotate;
 
 public class ASSInteract extends Pane {
 
+
     //Angle,Side,Side with angle bottom left on
     //horizontal base and then going clockwise.
     //angle and swing are opposite each other.
@@ -73,10 +74,8 @@ public class ASSInteract extends Pane {
 
 
     //return is used to initialize SCALE_FACTOR.
-    //Auto-scales and initializes base
-    //as a function of angle, sideLen, swingLen.
-    //Positions and scales base such that user can
-    //rotate swing completely.
+    //Scales and initializes base as a function of angle, sideLen, swingLen.
+    //Positions and scales base such that user can rotate swing completely.
     private double setUpScaleAndBase() {
         double yMin, yMax, xMin, xMax, yWidth, xWidth, scaleFactor;
 
@@ -99,14 +98,14 @@ public class ASSInteract extends Pane {
         //Want to improve in the future especially for obtuse case.
         base = new Line();
         if (xMin == 0)
-            base.setStartX(50);
+            base.setStartX(getTranslateX() + 50);
         else
-            base.setStartX(-1 * xMin * scaleFactor + 50);
+            base.setStartX(-1 * xMin * scaleFactor + getTranslateX() + 50);
         if (yMin == 0)
-            base.setStartY(750);
+            base.setStartY(getTranslateY() + 750);
         else
-            base.setStartY(750 + yMin * scaleFactor);
-        base.setEndX(780);
+            base.setStartY(getTranslateY() + 750 + yMin * scaleFactor);
+        base.setEndX(getTranslateX() + 780);
         base.setEndY(base.getStartY());
 
         base.getStrokeDashArray().addAll(20d, 10d);
@@ -230,8 +229,8 @@ public class ASSInteract extends Pane {
         //Effect: circle aligns (towards to cursor) along a radius from
         // swingStartX,swingStartY through the cursor.
         circle.setOnMouseDragged(event -> {
-            double xDiff = event.getSceneX() - swing.getStartX();
-            double yDiff = event.getSceneY() - swing.getStartY();
+            double xDiff = event.getSceneX() - (swing.getStartX() + getTranslateX());
+            double yDiff = event.getSceneY() - (swing.getStartY() + getTranslateY());
             double hypotenuse = Math.sqrt(yDiff * yDiff + xDiff * xDiff);
 
             circle.setCenterX(swing.getStartX() + swingLen * SCALE_FACTOR * xDiff / hypotenuse);
@@ -391,8 +390,16 @@ public class ASSInteract extends Pane {
         return data;
     }
 
-    public double dist(Line line) {
-        return Math.sqrt((line.getEndX() - line.getStartX()) * (line.getEndX() - line.getStartX()) +
-                (line.getEndY() - line.getStartY()) * (line.getEndY() - line.getStartY()));
+    public Line getSide() {
+        return side;
     }
+
+    public double getStartXBase() {
+        return base.getStartX();
+    }
+
+    public double getStartYBase() {
+        return base.getStartY();
+    }
+
 }
