@@ -5,14 +5,19 @@ import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class RunnerASS extends Application {
 
+    private final double HEIGHT = 600;
+    private final double WIDTH = 800;
     private Stage stage;
     private Pane root;
     private ASSInteract interact;
@@ -23,21 +28,23 @@ public class RunnerASS extends Application {
     //root contains an ASSMenu(VBox), ASSInteract(Pane), and bunch of Labels
     public Parent setUpScene(double angle, double sideLen, double swingLen) {
         root = new Pane();
-        root.setPrefSize(1000, 800);
+        root.setPrefSize(WIDTH, HEIGHT);
 
         this.angle = angle;
         this.sideLen = sideLen;
         this.swingLen = swingLen;
 
         interact = new ASSInteract(angle, sideLen, swingLen);
-        interact.setTranslateX(200);
+        interact.setTranslateX(WIDTH-HEIGHT);
 
         menu = new ASSMenu();
 
-        //Adds all labels to root
+        root.getChildren().addAll(interact, menu);
+
+        //Adds all Labels to root
         setUpLabels();
 
-        root.getChildren().addAll(interact, menu);
+
 
         return root;
     }
@@ -52,50 +59,143 @@ public class RunnerASS extends Application {
     //Menu on the side of the App.
     private class ASSMenu extends VBox {
         private TextField textFieldAngle, textFieldSideLen, textFieldSwingLen;
-        private Button showAltitude, hideAltitude, solve, reset;
+        private Button showAltitude, hideAltitude, solve, draw;
 
         ASSMenu() {
-            setPrefSize(200, 800);
-            setPadding(new Insets(20, 20, 20, 20));
-            setSpacing(30);
+            setPrefSize(WIDTH-HEIGHT, HEIGHT);
+            //setPadding(new Insets(20, 20, 20, 20));
+            setSpacing(5);
 
             // create a background fill
-            BackgroundFill background_fill = new BackgroundFill(Color.GRAY,
+            BackgroundFill background_fill = new BackgroundFill(Color.WHITESMOKE,
                     CornerRadii.EMPTY, Insets.EMPTY);
             // create Background
             Background background = new Background(background_fill);
             // set background
             setBackground(background);
 
+            //testing
+            ChoiceBox<String> choiceBox = new ChoiceBox<>();
+
+            choiceBox.getItems().addAll("A =", "B =", "C =");
+            choiceBox.setValue("");
+
+
             textFieldAngle = new TextField(String.valueOf(angle));
             textFieldAngle.setPromptText("angle");
-            textFieldAngle.setTranslateX(50);
+            //textFieldAngle.setTranslateX(120);
             textFieldAngle.setMaxWidth(50);
 
-            textFieldSideLen = new TextField(String.valueOf(sideLen));
-            textFieldSideLen.setPromptText("sideLen");
-            textFieldSideLen.setTranslateX(50);
-            textFieldSideLen.setMaxWidth(50);
+
+            //testing
+
+            Text textAngle = new Text("Angle");
+            textAngle.setFont(new Font(20));
+            textAngle.setFill(Color.FIREBRICK);
+
+
+            HBox hBox = new HBox();
+            //hBox.setTranslateX(50);
+            hBox.setSpacing(10);
+            hBox.getChildren().addAll(choiceBox,textFieldAngle);
+
+
+
+
+
+
 
             textFieldSwingLen = new TextField(String.valueOf(swingLen));
             textFieldSwingLen.setPromptText("swingLen");
-            textFieldSwingLen.setTranslateX(50);
+
             textFieldSwingLen.setMaxWidth(50);
 
+            Text textSwingLen = new Text("Side Opposite Angle");
+            textSwingLen.setFont(new Font(20));
+            textSwingLen.setFill(Color.FIREBRICK
+            );
+
+
+            ChoiceBox<String> choiceBox1 = new ChoiceBox<>();
+
+            choiceBox1.getItems().addAll("a =", "b =", "c =");
+            choiceBox1.setValue("");
+
+            HBox hBox1 = new HBox();
+            //hBox.setTranslateX(50);
+            hBox1.setSpacing(10);
+            hBox1.getChildren().addAll(choiceBox1,textFieldSwingLen);
+
+
+            Text textSideLen = new Text("Other Side");
+            textSideLen.setFont(new Font(20));
+            textSideLen.setFill(Color.DARKSLATEBLUE);
+
+            ChoiceBox<String> choiceBox2 = new ChoiceBox<>();
+
+            choiceBox2.getItems().addAll("a =", "b =", "c =");
+            choiceBox2.setValue("");
+
+
+            textFieldSideLen = new TextField(String.valueOf(sideLen));
+            textFieldSideLen.setPromptText("sideLen");
+            textFieldSideLen.setMaxWidth(50);
+
+            HBox hBox2 = new HBox();
+            //hBox.setTranslateX(50);
+            hBox2.setSpacing(10);
+            hBox2.getChildren().addAll(choiceBox2,textFieldSideLen);
+
+
+            Text space = new Text(" ");
+            space.setFont(new Font(15));
+
+
+
+            draw = new Button("Draw");
+            draw.setStyle("-fx-font-size:20");
+            draw.setOnAction(event -> {
+                //get the ASS values from textFields.
+                if (menu.isValidInput()) {
+                    stage.setScene(new Scene(setUpScene(menu.getAngle(), menu.getSideLen(), menu.getSwingLen())));
+                }
+            });
+
+            solve = new Button("Solve");
+            //how does this work?
+            solve.setStyle("-fx-font-size:20");
+            solve.setOnAction(event -> {
+                SolveStage.display(interact);
+            });
+
+            HBox hBoxDrawSolve = new HBox();
+            hBoxDrawSolve.setSpacing(10);
+            hBoxDrawSolve.getChildren().addAll(draw,solve);
+
+            //temporary buffer
+            Text buffer = new Text(" ");
+            buffer.setFont(new Font(80));
+
+
+
+
             showAltitude = new Button("Show Altitude");
-            showAltitude.setTranslateX(50);
             showAltitude.setOnAction(event -> {
                 interact.showAltitude();
             });
 
             hideAltitude = new Button("Hide Altitude");
-            hideAltitude.setTranslateX(50);
             hideAltitude.setOnAction(event -> {
                 interact.hideAltitude();
             });
 
+
+            HBox hBoxAltitude = new HBox();
+            hBoxAltitude.setSpacing(5);
+            hBoxAltitude.getChildren().addAll(showAltitude,hideAltitude);
+
+
             Button showLabels = new Button("Show Labels");
-            showLabels.setTranslateX(50);
             showLabels.setOnAction(event -> {
                 for (Label label : ASSLabels.getLabels())
                     label.setOpacity(1);
@@ -103,28 +203,24 @@ public class RunnerASS extends Application {
 
 
             Button hideLabels = new Button("Hide Labels");
-            hideLabels.setTranslateX(50);
             hideLabels.setOnAction(event -> {
                 for (Label label : ASSLabels.getLabels())
                     label.setOpacity(0);
             });
 
-            solve = new Button("Solve");
-            solve.setTranslateX(50);
-            solve.setOnAction(event -> {
-                System.out.println(interact.getData());
-            });
 
-            reset = new Button("Reset");
-            reset.setTranslateX(50);
-            reset.setOnAction(event -> {
-                //get the ASS values from textFields.
-                if (menu.isValidInput()) {
-                    stage.setScene(new Scene(setUpScene(menu.getAngle(), menu.getSideLen(), menu.getSwingLen())));
-                }
-            });
+            HBox hBoxLabels = new HBox();
+            hBoxLabels.setSpacing(5);
+            hBoxLabels.getChildren().addAll(showLabels,hideLabels);
 
-            getChildren().addAll(textFieldAngle, textFieldSideLen, textFieldSwingLen, showAltitude, hideAltitude, showLabels, hideLabels, solve, reset);
+
+
+            Text space0 = new Text(" ");
+            space0.setFont(new Font(5));
+            Text space1 = new Text(" ");
+            space1.setFont(new Font(5));
+
+            getChildren().addAll(textAngle,hBox,space0,textSwingLen, hBox1,space1,textSideLen,hBox2,space,hBoxDrawSolve,buffer, hBoxAltitude,hBoxLabels);
         }
 
         //check to make sure the input is a double.
