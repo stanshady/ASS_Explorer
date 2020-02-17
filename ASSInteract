@@ -1,6 +1,10 @@
 package ASSExplorer;
 
+import javafx.geometry.Insets;
 import javafx.scene.Cursor;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -8,6 +12,8 @@ import javafx.scene.transform.Rotate;
 
 public class ASSInteract extends Pane {
 
+    private final double HEIGHT = 600;
+    private final double WIDTH = 600;
 
     //Angle,Side,Side with angle bottom left on
     //horizontal base and then going clockwise.
@@ -25,7 +31,18 @@ public class ASSInteract extends Pane {
     private boolean dragOn; //method probably already exists in mouseEvent
 
     ASSInteract(double angle, double sideLen, double swingLen) {
-        setPrefSize(800, 800);
+        setPrefSize(WIDTH, HEIGHT);
+
+        // create a background fill
+        BackgroundFill background_fill = new BackgroundFill(Color.LIGHTGREY,
+                CornerRadii.EMPTY, Insets.EMPTY);
+        // create Background
+        Background background = new Background(background_fill);
+        // set background
+        setBackground(background);
+
+
+
 
         //ASS inputs
         this.angle = angle;
@@ -86,27 +103,49 @@ public class ASSInteract extends Pane {
 
         //xWidth is the necessary minimum width
         xMin = Math.min(0, sideLen * Math.cos(ANGLE_RADIAN) - swingLen);
+        System.out.println("xMin = " + xMin);
+
         xMax = Math.max(0, sideLen * Math.cos(ANGLE_RADIAN) + swingLen);
+        System.out.println("xMax = " + xMax);
         xWidth = xMax - xMin;
+        System.out.println("xWidth = " + xWidth);
 
         //720 = 0.9*800  Use 90% so there is buffer.
         //Use max(xWidth,yWidth) to scale window to make
         //sure everything fits.
-        scaleFactor = 720 / Math.max(xWidth, yWidth);
+        scaleFactor = 0.8*WIDTH / Math.max(xWidth, yWidth);
+        System.out.println(scaleFactor);
 
         //Position base so that swing can rotate completely.
         //Want to improve in the future especially for obtuse case.
         base = new Line();
         if (xMin == 0)
-            base.setStartX(getTranslateX() + 50);
+            base.setStartX(WIDTH*0.1);
         else
-            base.setStartX(-1 * xMin * scaleFactor + getTranslateX() + 50);
+            base.setStartX(-1* xMin * scaleFactor+WIDTH*0.1);
         if (yMin == 0)
-            base.setStartY(getTranslateY() + 750);
+            base.setStartY(HEIGHT*0.9);
         else
-            base.setStartY(getTranslateY() + 750 + yMin * scaleFactor);
-        base.setEndX(getTranslateX() + 780);
+            base.setStartY(HEIGHT + yMin * scaleFactor-HEIGHT*0.1);
+        base.setEndX(WIDTH*0.9);
         base.setEndY(base.getStartY());
+
+
+/*
+        //Position base so that swing can rotate completely.
+        //Want to improve in the future especially for obtuse case.
+        base = new Line();
+        if (xMin == 0)
+            base.setStartX(getTranslateX() + 100);
+        else
+            base.setStartX(-1 * xMin * scaleFactor + getTranslateX() + 20);
+        if (yMin == 0)
+            base.setStartY(getTranslateY() + HEIGHT - 20);
+        else
+            base.setStartY(getTranslateY() + HEIGHT - 20 + yMin * scaleFactor);
+        base.setEndX(getTranslateX() + HEIGHT - 20);
+        base.setEndY(base.getStartY());
+*/
 
         base.getStrokeDashArray().addAll(20d, 10d);
         return scaleFactor;
@@ -392,6 +431,20 @@ public class ASSInteract extends Pane {
 
     public Line getSide() {
         return side;
+    }
+
+
+    public Line getLongGreen() {
+        return longGreen;
+    }
+
+    public Line getShortGreen() {
+        return shortGreen;
+    }
+
+
+    public Line getSwing() {
+        return swing;
     }
 
     public double getStartXBase() {
