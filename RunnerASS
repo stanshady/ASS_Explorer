@@ -21,22 +21,14 @@ public class RunnerASS extends Application {
         root = new Pane();
         root.setPrefSize(1000, 800);
 
-
-
-
-
         interact = new ASSInteract(55, 320, 300);
         menu = new ASSMenu();
         menu.setTranslateX(800);
-
-
-
 
         root.getChildren().addAll(interact, menu);
 
         return root;
     }
-
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -49,16 +41,14 @@ public class RunnerASS extends Application {
         launch(args);
     }
 
-
+    //Menu on the side of the App
     private class ASSMenu extends VBox {
-
         private TextField angle, sideLen, swingLen;
-        private Button showAltitude, hideAltitude;
+        private Button showAltitude, hideAltitude, solve, reset;
 
-        ASSMenu(){
-            setPrefSize(200,800);
-            setPadding(new Insets(20,20,20,20));
-
+        ASSMenu() {
+            setPrefSize(200, 800);
+            setPadding(new Insets(20, 20, 20, 20));
             setSpacing(30);
 
             // create a background fill
@@ -68,7 +58,6 @@ public class RunnerASS extends Application {
             Background background = new Background(background_fill);
             // set background
             setBackground(background);
-
 
             angle = new TextField("55");
             angle.setPromptText("angle");
@@ -87,92 +76,74 @@ public class RunnerASS extends Application {
 
             showAltitude = new Button("Show Altitude");
             showAltitude.setTranslateX(50);
-
             showAltitude.setOnAction(event -> {
                 interact.showAltitude();
             });
 
             hideAltitude = new Button("Hide Altitude");
             hideAltitude.setTranslateX(50);
-
-
             hideAltitude.setOnAction(event -> {
                 interact.hideAltitude();
             });
 
-            Button button2 = new Button("Button 2");
-            button2.setTranslateX(50);
-            Button button3 = new Button("Button 3");
-            button3.setTranslateX(50);
-            Button button4 = new Button("Button 4");
-            button4.setTranslateX(50);
-            Button button5 = new Button("Button 5");
-            button5.setTranslateX(50);
+            solve = new Button("Solve");
+            solve.setTranslateX(50);
+            solve.setOnAction(event -> {
+                System.out.println(interact.getData());
+            });
 
-            Button reset = new Button("Reset");
+            reset = new Button("Reset");
             reset.setTranslateX(50);
-
-
             reset.setOnAction(event -> {
                 //get the ASS values from textFields.
-                if(menu.isValidInput()) {
-
-
+                if (menu.isValidInput()) {
                     interact = new ASSInteract(menu.getAngle(), menu.getSideLen(), menu.getSwingLen());
                 }
                 root.getChildren().clear();
                 root.getChildren().addAll(interact, menu);
             });
 
-            getChildren().addAll(angle,sideLen,swingLen,showAltitude,hideAltitude,reset);
+            getChildren().addAll(angle, sideLen, swingLen, showAltitude, hideAltitude, solve, reset);
         }
 
-        //check to make sure the input is a double
-        //from NewBoston Gui Tutorial Ep 9,10
-        private boolean isDouble(TextField input){
-            try{
+        //check to make sure the input is a double.
+        //From NewBoston Gui Tutorial Ep 9,10
+        private boolean isDouble(TextField input) {
+            try {
                 double text = Double.parseDouble(input.getText());
                 return true;
-            }catch(NumberFormatException e){
+            } catch (NumberFormatException e) {
                 return false;
             }
         }
 
-        public boolean isValidInput(){
+        public boolean isValidInput() {
             return isDouble(angle) && isDouble(sideLen) && isDouble(swingLen);
         }
 
-        //will eventually return -1.0 if text is not a double in [0,180).
-        public double getAngle(){
-            if(!isDouble(angle)){
+        //Will eventually return -1.0 if text is not a double in [0,180).
+        public double getAngle() {
+            if (!isDouble(angle)) {
                 return -1;
             }
             return Double.parseDouble(angle.getText());
         }
 
         //returns -1.0 if text is not a double > 0.
-        public double getSideLen(){
-            if(!isDouble(sideLen)){
+        public double getSideLen() {
+            if (!isDouble(sideLen)) {
                 return -1;
             }
             return Double.parseDouble(sideLen.getText());
         }
 
         //returns -1.0 if text is not a double > 0.
-        public double getSwingLen(){
-            if(!isDouble(swingLen)){
+        public double getSwingLen() {
+            if (!isDouble(swingLen)) {
                 return -1;
             }
             return Double.parseDouble(swingLen.getText());
         }
-
-
-
-
     }
 
-
-
 }
-
-
