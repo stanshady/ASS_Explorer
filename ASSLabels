@@ -20,7 +20,7 @@ public class ASSLabels {
     private ASSInteract interact;
 
     //The labels
-    private Label swingAngleLabel, sideLenLabel;
+    private Label swingAngleLabel, sideLenLabel, swingLenLabel;
 
 
     ASSLabels(ASSInteract interact) {
@@ -31,13 +31,15 @@ public class ASSLabels {
 
         setUpSideLenLabel();
 
+        //setUpSwingLenLabel();
+
     }
 
     private void setUpSwingAngleLabel() {
         swingAngleLabel = new Label("A");
         swingAngleLabel.setFont(new Font(20));
         swingAngleLabel.setTranslateX(interact.getTranslateX() + interact.getStartXBase() - 18);
-        swingAngleLabel.setTranslateY(interact.getTranslateY() + interact.getStartYBase());
+        swingAngleLabel.setTranslateY(interact.getTranslateY() + interact.getStartYBase()-12);
         swingAngleLabel.setOpacity(0);
 
         labels.add(swingAngleLabel);
@@ -47,11 +49,13 @@ public class ASSLabels {
         sideLenLabel = new Label(String.valueOf(interact.getData().getSideLen()));
         sideLenLabel.setFont(new Font(20));
 
-        BackgroundFill background_fill = new BackgroundFill(Color.PINK,
+/*
+        BackgroundFill background_fill = new BackgroundFill(Color.WHITESMOKE,
                 CornerRadii.EMPTY,
                 Insets.EMPTY);
         Background background = new Background(background_fill);
         sideLenLabel.setBackground(background);
+*/
 
         //1st calculate midpoint of sideLen:
         double midX = 0.5 * (interact.getSide().getEndX() - interact.getSide().getStartX());
@@ -66,7 +70,54 @@ public class ASSLabels {
                 sideLenLabel.getLayoutY());
         sideLenLabel.getTransforms().addAll(rotate);
 
+        //move along normal
+        sideLenLabel.setTranslateX(sideLenLabel.getTranslateX() + 24*Math.cos((interact.getData().getSwingAngle()+90)*Math.PI/180));
+        sideLenLabel.setTranslateY(sideLenLabel.getTranslateY() - 24*Math.sin((interact.getData().getSwingAngle()+90)*Math.PI/180));
+
         labels.add(sideLenLabel);
+    }
+
+    private void setUpSwingLenLabel() {
+        swingLenLabel = new Label(String.valueOf(interact.getData().getSwingLen()));
+        swingLenLabel.setFont(new Font(20));
+
+/*
+        BackgroundFill background_fill = new BackgroundFill(Color.WHITESMOKE,
+                CornerRadii.EMPTY,
+                Insets.EMPTY);
+        Background background = new Background(background_fill);
+        swingLenLabel.setBackground(background);
+*/
+
+
+
+        //1st calculate midpoint of sideLen:
+        double midX = 0.5 * (interact.getSwing().getEndX() - interact.getSwing().getStartX());
+        double midY = 0.5 * (interact.getSwing().getEndY() - interact.getSwing().getStartY());
+
+
+        swingLenLabel.setTranslateX(interact.getTranslateX() + interact.getSwing().getStartX() + midX);
+        swingLenLabel.setTranslateY(interact.getTranslateY() + interact.getSwing().getStartY() + midY);
+        swingLenLabel.setOpacity(0);
+
+        //calculate swing's current angle
+        double deltaY = interact.getSwing().getEndY() - interact.getSwing().getStartY();
+        double deltaX = interact.getSwing().getEndX() - interact.getSwing().getStartX();
+        double swingCurrentAngle = Math.atan(deltaY/deltaX) * 180 / Math.PI;
+
+
+        Rotate rotate = new Rotate(swingCurrentAngle,
+                swingLenLabel.getLayoutX(),
+                swingLenLabel.getLayoutY());
+        swingLenLabel.getTransforms().addAll(rotate);
+
+        //move along normal
+       swingLenLabel.setTranslateX(swingLenLabel.getTranslateX() + 24*Math.cos((swingCurrentAngle+90)*Math.PI/180));
+      swingLenLabel.setTranslateY(swingLenLabel.getTranslateY() - 30*Math.sin((swingCurrentAngle+90)*Math.PI/180));
+
+
+
+        labels.add(swingLenLabel);
     }
 
     //setters...just use setVisible()?
