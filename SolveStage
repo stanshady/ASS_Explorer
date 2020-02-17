@@ -1,0 +1,104 @@
+package ASSExplorer;
+
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import org.omg.CORBA.CODESET_INCOMPATIBLE;
+
+//displays the data and hopefully
+//solved triangles and hopefully
+//reason for numSolutions value.
+public class SolveStage {
+
+    public static void display(ASSInteract interact){
+        Stage stage = new Stage();
+        stage.setTitle("ASS Solution");
+
+        Pane layout = new Pane();
+        layout.setPadding(new Insets(0, 40, 20, 20));
+        //layout.setPrefSize(800,600);
+
+        Text solution = new Text(interact.getData().toString());
+        solution.setLayoutX(20);
+        solution.setLayoutY(20);
+        solution.setStyle("-fx-font-size:16");
+
+        Line tempSide = new Line(interact.getSide().getStartX(),
+                interact.getSide().getStartY(),
+                interact.getSide().getEndX(),
+                interact.getSide().getEndY());
+        tempSide.setStroke(Color.BLUE);
+        tempSide.setStrokeWidth(3);
+
+        Line tempLongGreen = new Line(interact.getLongGreen().getStartX(),
+                interact.getLongGreen().getStartY(),
+                interact.getLongGreen().getEndX(),
+                interact.getLongGreen().getEndY());
+        tempLongGreen.setStroke(Color.GREEN);
+        tempLongGreen.setStrokeWidth(3);
+
+        Line tempSwing = new Line(interact.getSwing().getStartX(),
+                interact.getSwing().getStartY(),
+                tempLongGreen.getEndX(),
+                tempLongGreen.getEndY());
+        tempSwing.setStrokeWidth(3);
+        tempSwing.setStroke(Color.RED);
+
+        Pane longTrianglePane = new Pane();
+        longTrianglePane.getChildren().addAll(tempSide,tempLongGreen,tempSwing);
+
+
+        Line tempSideShort = new Line(interact.getSide().getStartX(),
+                interact.getSide().getStartY(),
+                interact.getSide().getEndX(),
+                interact.getSide().getEndY());
+        tempSideShort.setStroke(Color.BLUE);
+        tempSideShort.setStrokeWidth(3);
+
+        Line tempShortGreen = new Line(interact.getShortGreen().getStartX(),
+                interact.getShortGreen().getStartY(),
+                interact.getShortGreen().getEndX(),
+                interact.getShortGreen().getEndY());
+        tempShortGreen.setStroke(Color.GREEN);
+        tempShortGreen.setStrokeWidth(3);
+
+        Line tempSwingShort = new Line(interact.getSwing().getStartX(),
+                interact.getSwing().getStartY(),
+                tempShortGreen.getEndX(),
+                tempShortGreen.getEndY());
+        tempSwingShort.setStrokeWidth(3);
+        tempSwingShort.setStroke(Color.RED);
+
+        Pane shortTrianglePane = new Pane();
+        shortTrianglePane.getChildren().addAll(tempSideShort,tempShortGreen,tempSwingShort);
+
+
+
+
+        HBox hBoxSolutions = new HBox();
+        hBoxSolutions.setSpacing(50);
+        hBoxSolutions.getChildren().addAll(shortTrianglePane,longTrianglePane);
+
+
+
+        layout.getChildren().addAll(solution,hBoxSolutions);
+
+
+
+        Scene scene = new Scene(layout);
+
+        stage.setScene(scene);
+        stage.show();
+    }
+
+
+}
