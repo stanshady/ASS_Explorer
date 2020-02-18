@@ -4,34 +4,59 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import org.omg.CORBA.CODESET_INCOMPATIBLE;
 
 //displays the data and hopefully
 //solved triangles and hopefully
 //reason for numSolutions value.
 public class SolveStage {
 
-    public static void display(ASSInteract interact){
+    private static ASSInteract interact;
+
+    public static void display(ASSInteract mYinteract) {
         Stage stage = new Stage();
         stage.setTitle("ASS Solution");
+
+
+        interact = mYinteract;
 
         Pane layout = new Pane();
         layout.setPadding(new Insets(0, 40, 20, 20));
         //layout.setPrefSize(800,600);
 
-        Text solution = new Text(interact.getData().toString());
-        solution.setLayoutX(20);
-        solution.setLayoutY(20);
-        solution.setStyle("-fx-font-size:16");
+        String solutionText = "";
+        int numSolutions = interact.getData().getNumSolutions();
 
+        switch (numSolutions) {
+            case 0:
+                solutionText = interact.getData().solutionText0();
+                break;
+            case 1:
+                solutionText = interact.getData().solutionTextLong();
+                break;
+           // case 2:
+              //  solutionText = interact.getData().toString();
+                //break;
+            default:
+                break;
+        }
+
+
+        //testing
+        Text diagnosis = new Text(interact.getData().diagnosis());
+
+        //Text solution = new Text(solutionText);
+        diagnosis.setStyle("-fx-font-size:16");
+        diagnosis.setTranslateX(20);
+        diagnosis.setTranslateY(20);
+
+
+
+        //build the triangles to display
         Line tempSide = new Line(interact.getSide().getStartX(),
                 interact.getSide().getStartY(),
                 interact.getSide().getEndX(),
@@ -54,7 +79,7 @@ public class SolveStage {
         tempSwing.setStroke(Color.RED);
 
         Pane longTrianglePane = new Pane();
-        longTrianglePane.getChildren().addAll(tempSide,tempLongGreen,tempSwing);
+        longTrianglePane.getChildren().addAll(tempSide, tempLongGreen, tempSwing);
 
 
         Line tempSideShort = new Line(interact.getSide().getStartX(),
@@ -79,19 +104,67 @@ public class SolveStage {
         tempSwingShort.setStroke(Color.RED);
 
         Pane shortTrianglePane = new Pane();
-        shortTrianglePane.getChildren().addAll(tempSideShort,tempShortGreen,tempSwingShort);
+        shortTrianglePane.getChildren().addAll(tempSideShort, tempShortGreen, tempSwingShort);
+
+        VBox vBoxShort;
+        VBox vBoxLong;
+        HBox hBoxSolutions;
+
+        if (numSolutions == 1) {
+            vBoxLong = new VBox();
+            Text textLongData = new Text(interact.getData().solutionTextLong());
+            textLongData.setStyle("-fx-font-size:16");
+            textLongData.setTranslateX(20);
+            vBoxLong.getChildren().addAll(diagnosis,textLongData,longTrianglePane);
+
+            VBox vBox1Solutions = new VBox();
+            vBox1Solutions.setSpacing(50);
+            vBox1Solutions.getChildren().addAll(diagnosis,vBoxLong);
 
 
+            layout.getChildren().addAll(vBox1Solutions);
+
+            //testing
+           // Text test = new Text(solutionText);
+           // test.setLayoutX(20);
+           // test.setLayoutY(20);
+           // test.setStyle("-fx-font-size:16");
+
+            //not testing
+           // hBoxSolutions.getChildren().addAll(longTrianglePane);
+        }
+        else if (numSolutions == 2) {
+
+            vBoxLong = new VBox();
+            Text textLongData = new Text(interact.getData().solutionTextLong());
+            textLongData.setStyle("-fx-font-size:16");
+            textLongData.setTranslateX(20);
+            vBoxLong.getChildren().addAll(diagnosis,textLongData,longTrianglePane);
+
+            vBoxShort = new VBox();
+            Text textShortData = new Text(interact.getData().solutionTextShort());
+            textShortData.setStyle("-fx-font-size:16");
+            vBoxShort.getChildren().addAll(diagnosis,textShortData,shortTrianglePane);
 
 
-        HBox hBoxSolutions = new HBox();
-        hBoxSolutions.setSpacing(50);
-        hBoxSolutions.getChildren().addAll(shortTrianglePane,longTrianglePane);
+            hBoxSolutions = new HBox();
+            hBoxSolutions.setSpacing(50);
+
+            hBoxSolutions.getChildren().addAll(vBoxLong,vBoxShort);
+
+            VBox vBox2Solutions = new VBox();
+            vBox2Solutions.setSpacing(50);
+            vBox2Solutions.getChildren().addAll(diagnosis,hBoxSolutions);
+            layout.getChildren().addAll(vBox2Solutions);
+
+            //layout.getChildren().addAll(diagnosis,hBoxSolutions);
+        }
+        //testing
+        else //(numSolutions == 0)
+            layout.getChildren().addAll(diagnosis);
 
 
-
-        layout.getChildren().addAll(solution,hBoxSolutions);
-
+        //layout.getChildren().addAll(diagnosis, hBoxSolutions);
 
 
         Scene scene = new Scene(layout);
@@ -99,6 +172,43 @@ public class SolveStage {
         stage.setScene(scene);
         stage.show();
     }
+
+
+    //Lots of work... idea is to animate solutions.  Just beginning
+    private static Pane animateSwingLessThanAltitude(){
+        Pane pane = new Pane();
+
+        Line tempSide = new Line(interact.getSide().getStartX(),
+                interact.getSide().getStartY(),
+                interact.getSide().getEndX(),
+                interact.getSide().getEndY());
+        tempSide.setStroke(Color.BLUE);
+        tempSide.setStrokeWidth(3);
+
+        Line tempLongGreen = new Line(interact.getLongGreen().getStartX(),
+                interact.getLongGreen().getStartY(),
+                interact.getLongGreen().getEndX(),
+                interact.getLongGreen().getEndY());
+        tempLongGreen.setStroke(Color.GREEN);
+        tempLongGreen.setStrokeWidth(3);
+
+        Line tempSwing = new Line(interact.getSwing().getStartX(),
+                interact.getSwing().getStartY(),
+                tempLongGreen.getEndX(),
+                tempLongGreen.getEndY());
+        tempSwing.setStrokeWidth(3);
+        tempSwing.setStroke(Color.RED);
+
+
+      //  Timeline timeline = new Timeline();
+     //   KeyFrame keyFrame = new KeyFrame(Duration.millis(3000),
+     //           new KeyValue(rect.xProperty(),300));
+     //   timeline.getKeyFrames().addAll(keyFrame);
+     //   timeline.play();
+
+        return pane;
+    }
+
 
 
 }
