@@ -63,7 +63,7 @@ public class RunnerASS extends Application {
 
         ASSMenu() {
             setPrefSize(WIDTH-HEIGHT, HEIGHT);
-            //setPadding(new Insets(20, 20, 20, 20));
+            setPadding(new Insets(0, 0, 0, 12));
             setSpacing(5);
 
             // create a background fill
@@ -78,7 +78,7 @@ public class RunnerASS extends Application {
             ChoiceBox<String> choiceBox = new ChoiceBox<>();
 
             choiceBox.getItems().addAll("A =", "B =", "C =");
-            choiceBox.setValue("");
+            choiceBox.setValue("A =");
 
 
             textFieldAngle = new TextField(String.valueOf(angle));
@@ -110,7 +110,7 @@ public class RunnerASS extends Application {
 
             textFieldSwingLen.setMaxWidth(50);
 
-            Text textSwingLen = new Text("Side Opposite Angle");
+            Text textSwingLen = new Text("Opposite Side");
             textSwingLen.setFont(new Font(20));
             textSwingLen.setFill(Color.FIREBRICK
             );
@@ -119,7 +119,7 @@ public class RunnerASS extends Application {
             ChoiceBox<String> choiceBox1 = new ChoiceBox<>();
 
             choiceBox1.getItems().addAll("a =", "b =", "c =");
-            choiceBox1.setValue("");
+            choiceBox1.setValue("a =");
 
             HBox hBox1 = new HBox();
             //hBox.setTranslateX(50);
@@ -127,14 +127,14 @@ public class RunnerASS extends Application {
             hBox1.getChildren().addAll(choiceBox1,textFieldSwingLen);
 
 
-            Text textSideLen = new Text("Other Side");
+            Text textSideLen = new Text("Adjacent Side");
             textSideLen.setFont(new Font(20));
             textSideLen.setFill(Color.DARKSLATEBLUE);
 
             ChoiceBox<String> choiceBox2 = new ChoiceBox<>();
 
             choiceBox2.getItems().addAll("a =", "b =", "c =");
-            choiceBox2.setValue("");
+            choiceBox2.setValue("b =");
 
 
             textFieldSideLen = new TextField(String.valueOf(sideLen));
@@ -169,12 +169,13 @@ public class RunnerASS extends Application {
             });
 
             HBox hBoxDrawSolve = new HBox();
-            hBoxDrawSolve.setSpacing(10);
+            hBoxDrawSolve.setSpacing(15);
+            hBoxDrawSolve.setTranslateX(5);
             hBoxDrawSolve.getChildren().addAll(draw,solve);
 
             //temporary buffer
             Text buffer = new Text(" ");
-            buffer.setFont(new Font(80));
+            buffer.setFont(new Font(180));
 
 
 
