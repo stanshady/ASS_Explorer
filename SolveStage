@@ -2,11 +2,11 @@ package ASSExplorer;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -25,8 +25,15 @@ public class SolveStage {
         interact = mYinteract;
 
         Pane layout = new Pane();
-        layout.setPadding(new Insets(0, 40, 20, 20));
+        layout.setPadding(new Insets(0, 20, 20, 0));
         //layout.setPrefSize(800,600);
+
+
+        BackgroundFill background_fill = new BackgroundFill(Color.AZURE,
+                CornerRadii.EMPTY, Insets.EMPTY);
+        Background background = new Background(background_fill);
+        layout.setBackground(background);
+
 
         String solutionText = "";
         int numSolutions = interact.getData().getNumSolutions();
@@ -113,16 +120,33 @@ public class SolveStage {
         if (numSolutions == 1) {
             vBoxLong = new VBox();
             Text textLongData = new Text(interact.getData().solutionTextLong());
-            textLongData.setStyle("-fx-font-size:16");
+            textLongData.setStyle("-fx-font-size:24");
             textLongData.setTranslateX(20);
-            vBoxLong.getChildren().addAll(diagnosis,textLongData,longTrianglePane);
+            textLongData.setTranslateY(30);
+            vBoxLong.getChildren().addAll(diagnosis,textLongData);
 
-            VBox vBox1Solutions = new VBox();
-            vBox1Solutions.setSpacing(50);
-            vBox1Solutions.getChildren().addAll(diagnosis,vBoxLong);
+            //VBox vBox1Solutions = new VBox();
+            //vBox1Solutions.setSpacing(50);
+            //vBox1Solutions.getChildren().addAll(diagnosis,vBoxLong);
 
 
-            layout.getChildren().addAll(vBox1Solutions);
+            Label swingAngleLabel = new Label("A");
+            swingAngleLabel.setFont(new Font(20));
+            swingAngleLabel.setTranslateX(tempLongGreen.getStartX() - 18);
+            swingAngleLabel.setTranslateY(tempLongGreen.getStartY()-12);
+
+            Label baseAngleLabel = new Label("C");
+            baseAngleLabel.setFont(new Font(20));
+            baseAngleLabel.setTranslateX(tempSwing.getStartX()-6);
+            baseAngleLabel.setTranslateY(tempSwing.getStartY()-30);
+
+            Label sideAngleLabel = new Label("B");
+            sideAngleLabel.setFont(new Font(20));
+            sideAngleLabel.setTranslateX(tempLongGreen.getEndX() + 6);
+            sideAngleLabel.setTranslateY(tempLongGreen.getEndY()-12);
+
+
+            layout.getChildren().addAll(swingAngleLabel,baseAngleLabel,sideAngleLabel,vBoxLong,longTrianglePane);
 
             //testing
            // Text test = new Text(solutionText);
@@ -135,30 +159,79 @@ public class SolveStage {
         }
         else if (numSolutions == 2) {
 
-            vBoxLong = new VBox();
-            Text textLongData = new Text(interact.getData().solutionTextLong());
-            textLongData.setStyle("-fx-font-size:16");
-            textLongData.setTranslateX(20);
-            vBoxLong.getChildren().addAll(diagnosis,textLongData,longTrianglePane);
+            layout.setMaxHeight(600);
 
-            vBoxShort = new VBox();
-            Text textShortData = new Text(interact.getData().solutionTextShort());
-            textShortData.setStyle("-fx-font-size:16");
-            vBoxShort.getChildren().addAll(diagnosis,textShortData,shortTrianglePane);
+            Label swingAngleLabel = new Label("A");
+            swingAngleLabel.setFont(new Font(20));
+            swingAngleLabel.setTranslateX(tempLongGreen.getStartX() - 18);
+            swingAngleLabel.setTranslateY(tempLongGreen.getStartY()-12);
+
+            Label baseAngleLabel = new Label("C");
+            baseAngleLabel.setFont(new Font(20));
+            baseAngleLabel.setTranslateX(tempSwing.getStartX()-6);
+            baseAngleLabel.setTranslateY(tempSwing.getStartY()-30);
+
+            Label sideAngleLabel = new Label("B");
+            sideAngleLabel.setFont(new Font(20));
+            sideAngleLabel.setTranslateX(tempLongGreen.getEndX() + 6);
+            sideAngleLabel.setTranslateY(tempLongGreen.getEndY()-12);
+            longTrianglePane.getChildren().addAll( sideAngleLabel,baseAngleLabel,swingAngleLabel);
+
+            //testing
+            longTrianglePane.setTranslateY(-200);
 
 
-            hBoxSolutions = new HBox();
-            hBoxSolutions.setSpacing(50);
+                vBoxLong = new VBox();
+                Text textLongData = new Text(interact.getData().solutionTextLong());
+                textLongData.setStyle("-fx-font-size:24");
+                textLongData.setTranslateX(20);
+                vBoxLong.getChildren().addAll(diagnosis,textLongData,longTrianglePane);
 
-            hBoxSolutions.getChildren().addAll(vBoxLong,vBoxShort);
+            Label swingAngleLabelShort = new Label("A");
+            swingAngleLabelShort.setFont(new Font(20));
+            swingAngleLabelShort.setTranslateX(tempShortGreen.getStartX() - 18);
+            swingAngleLabelShort.setTranslateY(tempShortGreen.getStartY()-12);
 
-            VBox vBox2Solutions = new VBox();
-            vBox2Solutions.setSpacing(50);
-            vBox2Solutions.getChildren().addAll(diagnosis,hBoxSolutions);
+            Label baseAngleLabelShort = new Label("C");
+            baseAngleLabelShort.setFont(new Font(20));
+            baseAngleLabelShort.setTranslateX(tempSwing.getStartX()-6);
+            baseAngleLabelShort.setTranslateY(tempSwing.getStartY()-30);
+
+            Label sideAngleLabelShort = new Label("B");
+            sideAngleLabelShort.setFont(new Font(20));
+            sideAngleLabelShort.setTranslateX(tempShortGreen.getEndX() + 6);
+            sideAngleLabelShort.setTranslateY(tempShortGreen.getEndY()-12);
+            shortTrianglePane.getChildren().addAll( sideAngleLabelShort,baseAngleLabelShort,swingAngleLabelShort);
+
+            //testing
+            shortTrianglePane.setTranslateY(-200);
+
+
+
+
+                vBoxShort = new VBox();
+                Text textShortData = new Text(interact.getData().solutionTextShort());
+                textShortData.setStyle("-fx-font-size:24");
+                vBoxShort.getChildren().addAll(diagnosis,textShortData,shortTrianglePane);
+
+
+
+
+                hBoxSolutions = new HBox();
+                hBoxSolutions.setSpacing(50);
+
+                hBoxSolutions.getChildren().addAll(vBoxLong,vBoxShort);
+
+                VBox vBox2Solutions = new VBox();
+                vBox2Solutions.setSpacing(50);
+                vBox2Solutions.getChildren().addAll(diagnosis,hBoxSolutions);
+
+
+
             layout.getChildren().addAll(vBox2Solutions);
 
-            //layout.getChildren().addAll(diagnosis,hBoxSolutions);
-        }
+                //layout.getChildren().addAll(diagnosis,hBoxSolutions);
+            }
         //testing
         else //(numSolutions == 0)
             layout.getChildren().addAll(diagnosis);
@@ -169,7 +242,9 @@ public class SolveStage {
 
         Scene scene = new Scene(layout);
 
+
         stage.setScene(scene);
+       // stage.setMaxHeight(600);
         stage.show();
     }
 
