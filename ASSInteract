@@ -34,7 +34,7 @@ public class ASSInteract extends Pane {
         setPrefSize(WIDTH, HEIGHT);
 
         // create a background fill
-        BackgroundFill background_fill = new BackgroundFill(Color.LIGHTGREY,
+        BackgroundFill background_fill = new BackgroundFill(Color.GAINSBORO,
                 CornerRadii.EMPTY, Insets.EMPTY);
         // create Background
         Background background = new Background(background_fill);
@@ -423,6 +423,10 @@ public class ASSInteract extends Pane {
 
     public Line getShortGreen() {
         return shortGreen;
+    }
+
+    public Circle getCircle() {
+        return circle;
     }
 
 
