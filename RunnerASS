@@ -4,10 +4,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -25,17 +22,24 @@ public class RunnerASS extends Application {
     private ASSLabels ASSLabels;
     private double angle, sideLen, swingLen;
 
+    //testing
+    boolean onAltitude = false;
+    boolean onLabels = false;
+
     //root contains an ASSMenu(VBox), ASSInteract(Pane), and bunch of Labels
     public Parent setUpScene(double angle, double sideLen, double swingLen) {
         root = new Pane();
         root.setPrefSize(WIDTH, HEIGHT);
+
+        onAltitude = false;
+        onLabels = false;
 
         this.angle = angle;
         this.sideLen = sideLen;
         this.swingLen = swingLen;
 
         interact = new ASSInteract(angle, sideLen, swingLen);
-        interact.setTranslateX(WIDTH-HEIGHT);
+        interact.setTranslateX(WIDTH - HEIGHT);
 
         menu = new ASSMenu();
 
@@ -43,7 +47,6 @@ public class RunnerASS extends Application {
 
         //Adds all Labels to root
         setUpLabels();
-
 
 
         return root;
@@ -62,8 +65,8 @@ public class RunnerASS extends Application {
         private Button showAltitude, hideAltitude, solve, draw;
 
         ASSMenu() {
-            setPrefSize(WIDTH-HEIGHT, HEIGHT);
-            setPadding(new Insets(0, 0, 0, 12));
+            setPrefSize(WIDTH - HEIGHT, HEIGHT);
+            setPadding(new Insets(20, 0, 20, 15));
             setSpacing(5);
 
             // create a background fill
@@ -97,12 +100,7 @@ public class RunnerASS extends Application {
             HBox hBox = new HBox();
             //hBox.setTranslateX(50);
             hBox.setSpacing(10);
-            hBox.getChildren().addAll(choiceBox,textFieldAngle);
-
-
-
-
-
+            hBox.getChildren().addAll(choiceBox, textFieldAngle);
 
 
             textFieldSwingLen = new TextField(String.valueOf(swingLen));
@@ -124,7 +122,7 @@ public class RunnerASS extends Application {
             HBox hBox1 = new HBox();
             //hBox.setTranslateX(50);
             hBox1.setSpacing(10);
-            hBox1.getChildren().addAll(choiceBox1,textFieldSwingLen);
+            hBox1.getChildren().addAll(choiceBox1, textFieldSwingLen);
 
 
             Text textSideLen = new Text("Adjacent Side");
@@ -144,12 +142,11 @@ public class RunnerASS extends Application {
             HBox hBox2 = new HBox();
             //hBox.setTranslateX(50);
             hBox2.setSpacing(10);
-            hBox2.getChildren().addAll(choiceBox2,textFieldSideLen);
+            hBox2.getChildren().addAll(choiceBox2, textFieldSideLen);
 
 
             Text space = new Text(" ");
-            space.setFont(new Font(15));
-
+            space.setFont(new Font(25));
 
 
             draw = new Button("Draw");
@@ -171,13 +168,11 @@ public class RunnerASS extends Application {
             HBox hBoxDrawSolve = new HBox();
             hBoxDrawSolve.setSpacing(15);
             hBoxDrawSolve.setTranslateX(5);
-            hBoxDrawSolve.getChildren().addAll(draw,solve);
+            hBoxDrawSolve.getChildren().addAll(draw, solve);
 
             //temporary buffer
             Text buffer = new Text(" ");
-            buffer.setFont(new Font(180));
-
-
+            buffer.setFont(new Font(10));
 
 
             showAltitude = new Button("Show Altitude");
@@ -193,13 +188,15 @@ public class RunnerASS extends Application {
 
             HBox hBoxAltitude = new HBox();
             hBoxAltitude.setSpacing(5);
-            hBoxAltitude.getChildren().addAll(showAltitude,hideAltitude);
+            hBoxAltitude.getChildren().addAll(showAltitude, hideAltitude);
 
 
             Button showLabels = new Button("Show Labels");
             showLabels.setOnAction(event -> {
+                //ASSLabels.upDateSwingLenLabel();
                 for (Label label : ASSLabels.getLabels())
                     label.setOpacity(1);
+
             });
 
 
@@ -212,8 +209,7 @@ public class RunnerASS extends Application {
 
             HBox hBoxLabels = new HBox();
             hBoxLabels.setSpacing(5);
-            hBoxLabels.getChildren().addAll(showLabels,hideLabels);
-
+            hBoxLabels.getChildren().addAll(showLabels, hideLabels);
 
 
             Text space0 = new Text(" ");
@@ -221,8 +217,42 @@ public class RunnerASS extends Application {
             Text space1 = new Text(" ");
             space1.setFont(new Font(5));
 
-            getChildren().addAll(textAngle,hBox,space0,textSwingLen, hBox1,space1,textSideLen,hBox2,space,hBoxDrawSolve,buffer, hBoxAltitude,hBoxLabels);
+            ToggleButton tb1 = new ToggleButton("Altitude");
+
+            tb1.setOnAction(event -> {
+                if (onAltitude) {
+                    interact.hideAltitude();
+                    onAltitude = false;
+                } else {
+                    interact.showAltitude();
+                    onAltitude = true;
+                }
+            });
+
+            ToggleButton tb2 = new ToggleButton("Labels");
+
+            tb2.setOnAction(event -> {
+                if (onLabels) {
+                    for (Label label : ASSLabels.getLabels())
+                        label.setOpacity(0);
+
+                    onLabels = false;
+                } else {
+                    for (Label label : ASSLabels.getLabels())
+                        label.setOpacity(1);
+                    onLabels = true;
+                }
+            });
+
+            HBox hBoxToggleButtons = new HBox();
+            hBoxToggleButtons.setSpacing(20);
+            hBoxToggleButtons.setTranslateX(20);
+            hBoxToggleButtons.getChildren().addAll(tb1,tb2);
+
+
+            getChildren().addAll(textAngle, hBox, space0, textSideLen, hBox2, space1, textSwingLen, hBox1, space, hBoxDrawSolve, buffer,hBoxToggleButtons);
         }
+
 
         //check to make sure the input is a double.
         //From NewBoston Gui Tutorial Ep 9,10
