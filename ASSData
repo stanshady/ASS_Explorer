@@ -99,7 +99,8 @@ public class ASSData {
                         "Angle is not acute but the Opposite Side is too short.\n" +
                         "A >= 90 but a <= b";
              else //numSolutions == 1
-                return "Angle is not acute and the Opposite Side is long enough to reach.\n" +
+                return numSolutions + " triangle.\n" +
+                        "Angle is not acute and the Opposite Side is long enough to reach.\n" +
                         "A >= 90 and a > b";
         }
         else { //swingAngle < 90
@@ -109,12 +110,12 @@ public class ASSData {
                         "A < 90 but a < altitude: a < b*sin(A)";
             else if(numSolutions == 1){
                 if(Math.abs(swingLen - altitudeLen) <= 0.00001) //close enough?
-                    return numSolutions + " triangles.\n" +
+                    return numSolutions + " triangle.\n" +
                             "Angle is acute and the opposite side is equal to the altitude. It is a right triangle.\n" +
                             "A < 90 and a = altitude: a = b*sin(A)";
                 else //swingLen > sideLen
-                    return numSolutions + " triangles.\n" +
-                            "Angle is acute and the opposite side is at greater than or equal to the adjacent side.\n" +
+                    return numSolutions + " triangle.\n" +
+                            "Angle is acute and the opposite side is greater than or equal to the adjacent side.\n" +
                             "A < 90 and a >= b";
             }
             else //numSolutions == 2 {
@@ -142,9 +143,14 @@ public class ASSData {
     public String solutionTextLong() {
         String ret = "";
 
+        if(swingAngle == 90)
+            ret += "Right Triangle:\n";
+        else if(swingAngle > 90)
+            ret += "Obtuse Triangle:\n";
+        else
+            ret += "Acute Triangle:\n";
 
-        ret += "Acute Triangle:\n" +
-                "A = " + formatDecimals(swingAngle) + ", " +
+        ret +=  "A = " + formatDecimals(swingAngle) + ", " +
                 "C = " + formatDecimals(baseAngleLong) + ", " +
                 "B = " + formatDecimals(sideAngleLong) + "\n";
         //        "swingAngel = " + formatDecimals(swingAngle) + ", " +
