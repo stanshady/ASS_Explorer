@@ -110,7 +110,7 @@ public class ASSInteract extends Pane {
         xWidth = xMax - xMin;
         System.out.println("xWidth = " + xWidth);
 
-        //720 = 0.9*800  Use 90% so there is buffer.
+        //Use 80% so there is buffer.
         //Use max(xWidth,yWidth) to scale window to make
         //sure everything fits.
         scaleFactor = 0.8*WIDTH / Math.max(xWidth, yWidth);
@@ -127,25 +127,8 @@ public class ASSInteract extends Pane {
             base.setStartY(HEIGHT*0.9);
         else
             base.setStartY(HEIGHT + yMin * scaleFactor-HEIGHT*0.1);
-        base.setEndX(WIDTH*0.9);
+        base.setEndX(WIDTH);
         base.setEndY(base.getStartY());
-
-
-/*
-        //Position base so that swing can rotate completely.
-        //Want to improve in the future especially for obtuse case.
-        base = new Line();
-        if (xMin == 0)
-            base.setStartX(getTranslateX() + 100);
-        else
-            base.setStartX(-1 * xMin * scaleFactor + getTranslateX() + 20);
-        if (yMin == 0)
-            base.setStartY(getTranslateY() + HEIGHT - 20);
-        else
-            base.setStartY(getTranslateY() + HEIGHT - 20 + yMin * scaleFactor);
-        base.setEndX(getTranslateX() + HEIGHT - 20);
-        base.setEndY(base.getStartY());
-*/
 
         base.getStrokeDashArray().addAll(20d, 10d);
         return scaleFactor;
