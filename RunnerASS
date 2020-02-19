@@ -23,16 +23,16 @@ public class RunnerASS extends Application {
     private double angle, sideLen, swingLen;
 
     //testing
-    boolean onAltitude = false;
-    boolean onLabels = false;
+    boolean onAltitude = true;
+    boolean onLabels = true;
 
     //root contains an ASSMenu(VBox), ASSInteract(Pane), and bunch of Labels
     public Parent setUpScene(double angle, double sideLen, double swingLen) {
         root = new Pane();
         root.setPrefSize(WIDTH, HEIGHT);
 
-        onAltitude = false;
-        onLabels = false;
+        onAltitude = true;
+        onLabels = true;
 
         this.angle = angle;
         this.sideLen = sideLen;
@@ -54,8 +54,10 @@ public class RunnerASS extends Application {
 
     private void setUpLabels() {
         ASSLabels = new ASSLabels(interact);
-        for (Label label : ASSLabels.getLabels())
+        for (Label label : ASSLabels.getLabels()) {
             root.getChildren().addAll(label);
+            label.setOpacity(1);
+        }
     }
 
     //***************************** ASSMenu Class ***************
@@ -218,6 +220,7 @@ public class RunnerASS extends Application {
             space1.setFont(new Font(5));
 
             ToggleButton tb1 = new ToggleButton("Altitude");
+            tb1.setSelected(true);
 
             tb1.setOnAction(event -> {
                 if (onAltitude) {
@@ -230,6 +233,7 @@ public class RunnerASS extends Application {
             });
 
             ToggleButton tb2 = new ToggleButton("Labels");
+            tb2.setSelected(true);
 
             tb2.setOnAction(event -> {
                 if (onLabels) {
