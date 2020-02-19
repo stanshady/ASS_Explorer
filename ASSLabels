@@ -9,6 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 //Contains all Label objects (A = 37, a = 12.5, etc) for ASS
@@ -20,7 +21,7 @@ public class ASSLabels {
     private ASSInteract interact;
 
     //The labels
-    private Label swingAngleLabel, sideLenLabel, swingLenLabel, baseAngleLabel, sideAngleLabel;
+    private Label swingAngleLabel, sideLenLabel, swingLenLabel, baseAngleLabel, sideAngleLabel, swingAngleValueLabel;
 
 
     ASSLabels(ASSInteract interact) {
@@ -35,9 +36,22 @@ public class ASSLabels {
 
         setUpSideAngleLabel();
 
+        //too hard.
+       // setUpSwingAngleValueLabel();
+
         //does not work...!
        // setUpSwingLenLabel();
 
+    }
+
+    private void setUpSwingAngleValueLabel(){
+        swingAngleValueLabel = new Label(formatDecimals(interact.getData().getSwingAngle()));
+        swingAngleValueLabel.setFont(new Font(20));
+        swingAngleValueLabel.setTranslateX(interact.getTranslateX() + interact.getStartXBase() + 36);
+        swingAngleValueLabel.setTranslateY(interact.getTranslateY() + interact.getStartYBase()- 36);
+        swingAngleValueLabel.setOpacity(0);
+
+        labels.add(swingAngleValueLabel);
     }
 
     private void setUpSwingAngleLabel() {
@@ -79,7 +93,7 @@ public class ASSLabels {
 
 
     private void setUpSideLenLabel() {
-        sideLenLabel = new Label(String.valueOf(interact.getData().getSideLen()));
+        sideLenLabel = new Label(formatDecimals(interact.getData().getSideLen()));
         sideLenLabel.setFont(new Font(20));
 
 /*
@@ -200,5 +214,11 @@ public class ASSLabels {
 
         labels.add(swingLenLabel);
     }
+
+    public String formatDecimals(double num) {
+        DecimalFormat df = new DecimalFormat("#.###");
+        return df.format(num);
+    }
+
 
 }
