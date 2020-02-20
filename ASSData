@@ -123,8 +123,7 @@ public class ASSData {
                 "Angle is acute and the opposite side is greater than the altitude but less than the adjacent side.\n" +
                         "A < 90 and b*sin(A) < a < b.";
             }
-        }
-
+    }
 
 
     public String formatDecimals(double num) {
