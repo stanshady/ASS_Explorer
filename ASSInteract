@@ -22,7 +22,7 @@ public class ASSInteract extends Pane {
     private double angle, sideLen, swingLen;
 
     private Line base, side, swing, shortGreen, longGreen, altitude;
-    private Circle circle; //add fatter dashed lined circle?
+    private Circle circle;
     private Rectangle longSwingRectangle, shortSwingRectangle, rightAngleRectangle;
     private Arc arc;
     private final double SCALE_FACTOR;
@@ -40,9 +40,6 @@ public class ASSInteract extends Pane {
         Background background = new Background(background_fill);
         // set background
         setBackground(background);
-
-
-
 
         //ASS inputs
         this.angle = angle;
@@ -86,13 +83,13 @@ public class ASSInteract extends Pane {
         setUpArc();
 
         //Important to start with circle on top.
-        getChildren().addAll(arc, altitude, swing, base, side, longGreen, shortGreen, longSwingRectangle, shortSwingRectangle, rightAngleRectangle, circle);
+        getChildren().addAll(arc, altitude, swing, base, side, longGreen, shortGreen,
+                longSwingRectangle, shortSwingRectangle, rightAngleRectangle, circle);
     }
 
-
-    //return is used to initialize SCALE_FACTOR.
-    //Scales and initializes base as a function of angle, sideLen, swingLen.
-    //Positions and scales base such that user can rotate swing completely.
+    // return is used to initialize SCALE_FACTOR.
+    // Scales and initializes base as a function of angle, sideLen, swingLen.
+    // Positions and scales base such that user can rotate swing completely.
     private double setUpScaleAndBase() {
         double yMin, yMax, xMin, xMax, yWidth, xWidth, scaleFactor;
 
@@ -110,14 +107,13 @@ public class ASSInteract extends Pane {
         xWidth = xMax - xMin;
         System.out.println("xWidth = " + xWidth);
 
-        //Use 80% so there is buffer.
-        //Use max(xWidth,yWidth) to scale window to make
-        //sure everything fits.
+        // Use 80% so there is buffer.
+        // Use max(xWidth,yWidth) to scale window to make sure everything fits.
         scaleFactor = 0.8*WIDTH / Math.max(xWidth, yWidth);
         System.out.println(scaleFactor);
 
-        //Position base so that swing can rotate completely.
-        //Want to improve in the future especially for obtuse case.
+        // Position base so that swing can rotate completely.
+        // Want to improve in the future especially for obtuse case.
         base = new Line();
         if (xMin == 0)
             base.setStartX(WIDTH*0.1);
@@ -208,8 +204,9 @@ public class ASSInteract extends Pane {
         shortGreen.setOpacity(0);
     }
 
-    //Most important node... lots of stuff.
-    //Circle is the endpoint of swing the user grabs to rotate and find solutions.
+    // Most important node... lots of stuff.
+    // Circle is bound to the endpoint of swing
+    // and is what the user grabs to rotate swing and find solutions.
     private void setUpCircle() {
         circle = new Circle(swing.getEndX(), swing.getEndY(), 7);
 
@@ -248,7 +245,7 @@ public class ASSInteract extends Pane {
         //We limit the mouse's (x,y) to the circle generated
         //by rotating swing at pivot point swingStartX,swingStartY.
         //Effect: circle aligns (towards to cursor) along a radius from
-        // swingStartX,swingStartY through the cursor.
+        // swingStartX, swingStartY through the cursor.
         circle.setOnMouseDragged(event -> {
             double xDiff = event.getSceneX() - (swing.getStartX() + getTranslateX());
             double yDiff = event.getSceneY() - (swing.getStartY() + getTranslateY());
@@ -260,7 +257,7 @@ public class ASSInteract extends Pane {
 
     }
 
-    //shortSwingRectangle is a linear extension of swing.
+    // shortSwingRectangle is a linear extension of swing.
     // Used for the shortGreen intersection hold feeling.
     private void setUpShortSwingRectangle() {
         shortSwingRectangle = new Rectangle(swing.getStartX(), swing.getStartY(), 2000, 30);
@@ -274,7 +271,7 @@ public class ASSInteract extends Pane {
         shortSwingRectangle.setLayoutX(shortSwingRectangle.getHeight() * 0.5 * Math.cos(angleNormalShort * Math.PI / 180));
         shortSwingRectangle.setLayoutY(shortSwingRectangle.getHeight() * 0.5 * Math.sin(angleNormalShort * Math.PI / 180));
 
-        //We adjust before rotate?..but it works
+        //We adjusted before rotating?..but it works?
         Rotate rotateShort = new Rotate(angleRotateShortRectangle, swing.getStartX(), swing.getStartY());
         shortSwingRectangle.getTransforms().addAll(rotateShort);
 
@@ -383,7 +380,7 @@ public class ASSInteract extends Pane {
         Shape intersectLong = Shape.intersect(circle, longSwingRectangle);
         Shape intersectShort = Shape.intersect(circle, shortSwingRectangle);
 
-        //check longSwingRectangle intersection
+        //check longSwingRectangle intersection with circle
         if (intersectLong.getBoundsInLocal().getWidth() != -1) {
             if (data.getNumSolutions() == 0)
                 return;
@@ -393,7 +390,7 @@ public class ASSInteract extends Pane {
             base.setOpacity(0);
         }
 
-        //check shortSwingRectangle intersection
+        //check shortSwingRectangle intersection with circle
         else if (intersectShort.getBoundsInLocal().getWidth() != -1) {
             if (data.getNumSolutions() <= 1)
                 return;
@@ -401,7 +398,8 @@ public class ASSInteract extends Pane {
             circle.setCenterY(shortGreen.getEndY());
             shortGreen.setOpacity(1);
             base.setOpacity(0);
-        } else {
+        }
+        else {
             longGreen.setOpacity(0);
             base.setOpacity(1);
         }
@@ -415,7 +413,6 @@ public class ASSInteract extends Pane {
         return side;
     }
 
-
     public Line getLongGreen() {
         return longGreen;
     }
@@ -428,7 +425,6 @@ public class ASSInteract extends Pane {
         return circle;
     }
 
-
     public Line getSwing() {
         return swing;
     }
@@ -440,5 +436,4 @@ public class ASSInteract extends Pane {
     public double getStartYBase() {
         return base.getStartY();
     }
-
 }
