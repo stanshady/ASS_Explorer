@@ -33,12 +33,9 @@ public class ASSInteract extends Pane {
     ASSInteract(double angle, double sideLen, double swingLen) {
         setPrefSize(WIDTH, HEIGHT);
 
-        // create a background fill
         BackgroundFill background_fill = new BackgroundFill(Color.GAINSBORO,
                 CornerRadii.EMPTY, Insets.EMPTY);
-        // create Background
         Background background = new Background(background_fill);
-        // set background
         setBackground(background);
 
         //ASS inputs
@@ -100,17 +97,12 @@ public class ASSInteract extends Pane {
 
         //xWidth is the necessary minimum width
         xMin = Math.min(0, sideLen * Math.cos(ANGLE_RADIAN) - swingLen);
-        System.out.println("xMin = " + xMin);
-
         xMax = Math.max(0, sideLen * Math.cos(ANGLE_RADIAN) + swingLen);
-        System.out.println("xMax = " + xMax);
         xWidth = xMax - xMin;
-        System.out.println("xWidth = " + xWidth);
 
         // Use 80% so there is buffer.
         // Use max(xWidth,yWidth) to scale window to make sure everything fits.
         scaleFactor = 0.8*WIDTH / Math.max(xWidth, yWidth);
-        System.out.println(scaleFactor);
 
         // Position base so that swing can rotate completely.
         // Want to improve in the future especially for obtuse case.
@@ -362,14 +354,14 @@ public class ASSInteract extends Pane {
         arc = new Arc();
         arc.setCenterX(base.getStartX());
         arc.setCenterY(base.getStartY());
-        arc.setRadiusX(30.0f);
-        arc.setRadiusY(30.0f);
+        arc.setRadiusX(20.0f);
+        arc.setRadiusY(20.0f);
         arc.setStartAngle(0);
         arc.setLength(angle);
         arc.setType(ArcType.OPEN);
         arc.setFill(null);
         arc.setStroke(Color.RED);
-        arc.setStrokeWidth(4);
+        arc.setStrokeWidth(2);
     }
 
     //Slick way to check shape intersection.
