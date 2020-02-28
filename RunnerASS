@@ -213,7 +213,9 @@ public class RunnerASS extends Application {
             solve.setStyle("-fx-font-size:20");
             solve.setOnAction(event -> {
                 //Opens a new window from SolveStage with the solution.
-                SolveStage.display(interact);
+               // SolveStage.display(interact);
+
+                SolveStage solveStage = new SolveStage(interact);
             });
 
             hBoxDrawSolve = new HBox();
@@ -280,9 +282,9 @@ public class RunnerASS extends Application {
             }
         }
 
-        // Checks if all three inputs are doubles.
+        // Checks if all three inputs are doubles in their appropriate ranges
         public boolean isValidInput() {
-            return isDouble(textFieldAngle) && isDouble(textFieldSideLen) && isDouble(textFieldSwingLen);
+            return getAngle() > -1 && getSideLen() > -1 && getSwingLen() > -1;
         }
 
         // Checks if angle input is double in correct range and if so returns it.
