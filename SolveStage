@@ -41,9 +41,16 @@ public class SolveStage {
     // Only used when numSolutions == 2.  Stores both VBoxes
     private HBox hBoxSolutions;
 
+    // Angle Labels
     private Label labelAngleSideLong, labelAngleSideShort,
             labelAngleSwingLong, labelAngleSwingShort,
             labelAngleBaseLong, labelAngleBaseShort;
+
+    // Side Labels
+    private Label labelSideLong, labelSideShort,
+            labelSwingLong, labelSwingShort,
+            labelBaseLong, labelBaseShort;
+
 
     SolveStage(ASSInteract interact) {
         this.interact = interact;
@@ -76,6 +83,14 @@ public class SolveStage {
         // Labels are added later.
         setUpTriangles();
 
+        // Initializes the side labels and adds them to paneLongTriangle
+        setUpLabelSidesLong();
+        setUpLabelSidesShort();
+
+        // Initializes the angle labels and adds them to paneLongTriangle
+        setUpLabelsAnglesLong();
+        setUpLabelsAnglesShort();
+
         if (numSolutions == 1) {
             // textData contains the angle and side values of the solution
             textLongData = new Text(interact.getData().solutionTextLong());
@@ -85,9 +100,7 @@ public class SolveStage {
 
             vBoxLong = new VBox();
             vBoxLong.getChildren().addAll(diagnosis, textLongData);
-
-            // Initializes the angle labels and adds them to paneLongTriangle
-            setUpLabelsAnglesLong();
+            paneLongTriangle.setTranslateY(-20);
 
             layout.getChildren().addAll(vBoxLong, paneLongTriangle);
 
@@ -96,7 +109,6 @@ public class SolveStage {
             // why?
             layout.setMaxHeight(600);
 
-            setUpLabelsAnglesLong();
             paneLongTriangle.setTranslateY(-200);
 
             textLongData = new Text(interact.getData().solutionTextLong());
@@ -106,7 +118,7 @@ public class SolveStage {
             vBoxLong = new VBox();
             vBoxLong.getChildren().addAll(diagnosis, textLongData, paneLongTriangle);
 
-            setUpLabelsAnglesShort();
+
             paneShortTriangle.setTranslateY(-200);
 
             textShortData = new Text(interact.getData().solutionTextShort());
@@ -125,14 +137,12 @@ public class SolveStage {
             vBox2Solutions.getChildren().addAll(diagnosis, hBoxSolutions);
 
             layout.getChildren().addAll(vBox2Solutions);
-        }
-
-        else //(numSolutions == 0)
+        } else //(numSolutions == 0)
             layout.getChildren().addAll(diagnosis);
     }
 
     // Initializes and adds to layout both paneTriangles and their lines.
-    public void setUpTriangles(){
+    public void setUpTriangles() {
         sideLong = new Line(interact.getSide().getStartX(),
                 interact.getSide().getStartY(),
                 interact.getSide().getEndX(),
@@ -226,5 +236,100 @@ public class SolveStage {
         labelAngleSideShort.setTranslateX(shortGreen.getEndX() + 6);
         labelAngleSideShort.setTranslateY(shortGreen.getEndY() - 12);
         paneShortTriangle.getChildren().addAll(labelAngleSideShort, labelAngleBaseShort, labelAngleSwingShort);
+    }
+
+    public void setUpLabelSidesShort() {
+        labelSwingShort = new Label("a");
+        labelSwingShort.setFont(new Font(20));
+
+        // Find the midpoint.
+        double swingMidX = (swingShort.getStartX() + swingShort.getEndX()) * 0.5;
+        double swingMidY = (swingShort.getStartY() + swingShort.getEndY()) * 0.5;
+        labelSwingShort.setTranslateX(swingMidX);
+        labelSwingShort.setTranslateY(swingMidY);
+
+        // Translate along the normal of swingLong
+        double slope = Math.atan((swingShort.getStartY() - swingShort.getEndY()) /
+                (swingShort.getEndX() - swingShort.getStartX()));
+
+        double normal = slope - Math.PI * 0.5;
+
+        //move along normal
+        labelSwingShort.setTranslateX(labelSwingShort.getTranslateX() + 6 * Math.cos(normal));
+        labelSwingShort.setTranslateY(labelSwingShort.getTranslateY() - 6 * Math.sin(normal));
+
+
+        labelSideShort = new Label("b");
+        labelSideShort.setFont(new Font(20));
+        // Find the midpoint.
+        double sideMidX = (sideShort.getStartX() + sideShort.getEndX()) * 0.5;
+        double sideMidY = (sideShort.getStartY() + sideShort.getEndY()) * 0.5;
+        labelSideShort.setTranslateX(sideMidX);
+        labelSideShort.setTranslateY(sideMidY);
+        // Translate along the normal of swingLong
+        slope = Math.atan((sideShort.getStartY() - sideShort.getEndY()) /
+                (sideShort.getEndX() - sideShort.getStartX()));
+        normal = slope + Math.PI * 0.5;
+        labelSideShort.setTranslateX(labelSideShort.getTranslateX() + 30 * Math.cos(normal));
+        labelSideShort.setTranslateY(labelSideShort.getTranslateY() - 30 * Math.sin(normal));
+
+
+        labelBaseShort = new Label("c");
+        labelBaseShort.setFont(new Font(20));
+        double baseMidX = (shortGreen.getStartX() + shortGreen.getEndX()) * 0.5;
+        double baseMidY = (shortGreen.getStartY() + shortGreen.getEndY()) * 0.5;
+        labelBaseShort.setTranslateX(baseMidX);
+        labelBaseShort.setTranslateY(baseMidY + 6);
+
+
+        paneShortTriangle.getChildren().addAll(labelSwingShort, labelSideShort, labelBaseShort);
+    }
+
+
+    public void setUpLabelSidesLong() {
+        labelSwingLong = new Label("a");
+        labelSwingLong.setFont(new Font(20));
+        // Find the midpoint.
+        double swingMidX = (swingLong.getStartX() + swingLong.getEndX()) * 0.5;
+        double swingMidY = (swingLong.getStartY() + swingLong.getEndY()) * 0.5;
+        labelSwingLong.setTranslateX(swingMidX);
+        labelSwingLong.setTranslateY(swingMidY);
+        // Translate along the normal of swingLong
+        double slope = Math.atan((swingLong.getStartY() - swingLong.getEndY()) /
+                (swingLong.getEndX() - swingLong.getStartX()));
+        double normal = slope + Math.PI * 0.5;
+        labelSwingLong.setTranslateX(labelSwingLong.getTranslateX() + 24 * Math.cos(normal));
+        labelSwingLong.setTranslateY(labelSwingLong.getTranslateY() - 24 * Math.sin(normal));
+
+
+        labelSideLong = new Label("b");
+        labelSideLong.setFont(new Font(20));
+        double sideMidX = (sideLong.getStartX() + sideLong.getEndX()) * 0.5;
+        double sideMidY = (sideLong.getStartY() + sideLong.getEndY()) * 0.5;
+        labelSideLong.setTranslateX(sideMidX);
+        labelSideLong.setTranslateY(sideMidY);
+        slope = Math.atan((sideLong.getStartY() - sideLong.getEndY()) /
+                (sideLong.getEndX() - sideLong.getStartX()));
+        // If swingAngle is obtuse we move along the opposite normal
+        if (interact.getData().getSwingAngle() < 90) {
+            normal = slope + Math.PI * 0.5;
+            labelSideLong.setTranslateX(labelSideLong.getTranslateX() + 30 * Math.cos(normal));
+            labelSideLong.setTranslateY(labelSideLong.getTranslateY() - 30 * Math.sin(normal));
+        }
+        else {
+            normal = slope - Math.PI * 0.5;
+            labelSideLong.setTranslateX(labelSideLong.getTranslateX() + 12 * Math.cos(normal));
+            labelSideLong.setTranslateY(labelSideLong.getTranslateY() - 12 * Math.sin(normal));
+        }
+
+
+        labelBaseLong = new Label("c");
+        labelBaseLong.setFont(new Font(20));
+        double baseMidX = (longGreen.getStartX() + longGreen.getEndX()) * 0.5;
+        double baseMidY = (longGreen.getStartY() + longGreen.getEndY()) * 0.5;
+        labelBaseLong.setTranslateX(baseMidX);
+        labelBaseLong.setTranslateY(baseMidY + 6);
+
+        paneLongTriangle.getChildren().addAll(labelSwingLong, labelSideLong, labelBaseLong);
     }
 }
