@@ -1,24 +1,20 @@
 package ASSExplorer;
 
-import javafx.geometry.Insets;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-//Contains all Label objects (A = 37, a = 12.5, etc) for ASS
-//Communicates with ASSInteract object _interact_ by
+// Contains all Label objects (A = 37, a = 12.5, etc) for ASS
+// Communicates with ASSInteract object _interact_ by
 // passing it as a parameter in the constructor.
 public class ASSLabels {
 
     private ArrayList<Label> labels;
     private ASSInteract interact;
+
 
     //The labels
     private Label swingAngleLabel, sideLenLabel, swingLenLabel, baseAngleLabel, sideAngleLabel, swingAngleValueLabel;
@@ -37,18 +33,18 @@ public class ASSLabels {
         setUpSideAngleLabel();
 
         //too hard.
-       // setUpSwingAngleValueLabel();
+        // setUpSwingAngleValueLabel();
 
         //does not work...!
-       // setUpSwingLenLabel();
+        // setUpSwingLenLabel();
 
     }
 
-    private void setUpSwingAngleValueLabel(){
+    private void setUpSwingAngleValueLabel() {
         swingAngleValueLabel = new Label(formatDecimals(interact.getData().getSwingAngle()));
         swingAngleValueLabel.setFont(new Font(20));
         swingAngleValueLabel.setTranslateX(interact.getTranslateX() + interact.getStartXBase() + 36);
-        swingAngleValueLabel.setTranslateY(interact.getTranslateY() + interact.getStartYBase()- 36);
+        swingAngleValueLabel.setTranslateY(interact.getTranslateY() + interact.getStartYBase() - 36);
         swingAngleValueLabel.setOpacity(0);
 
         labels.add(swingAngleValueLabel);
@@ -58,7 +54,7 @@ public class ASSLabels {
         swingAngleLabel = new Label("A");
         swingAngleLabel.setFont(new Font(20));
         swingAngleLabel.setTranslateX(interact.getTranslateX() + interact.getStartXBase() - 18);
-        swingAngleLabel.setTranslateY(interact.getTranslateY() + interact.getStartYBase()-12);
+        swingAngleLabel.setTranslateY(interact.getTranslateY() + interact.getStartYBase() - 12);
         swingAngleLabel.setOpacity(0);
 
         labels.add(swingAngleLabel);
@@ -68,7 +64,7 @@ public class ASSLabels {
         baseAngleLabel = new Label("C");
         baseAngleLabel.setFont(new Font(20));
         baseAngleLabel.setTranslateX(interact.getTranslateX() + interact.getSwing().getStartX() - 18);
-        baseAngleLabel.setTranslateY(interact.getTranslateY() + interact.getSwing().getStartY()- 24);
+        baseAngleLabel.setTranslateY(interact.getTranslateY() + interact.getSwing().getStartY() - 24);
         baseAngleLabel.setOpacity(0);
 
         labels.add(baseAngleLabel);
@@ -79,8 +75,8 @@ public class ASSLabels {
         sideAngleLabel.setFont(new Font(20));
         sideAngleLabel.setTranslateX(205);
         sideAngleLabel.setMouseTransparent(true);
-       // sideAngleLabel.setTranslateX(interact.getTranslateX() + interact.getSwing().getEndX() - 18);
-       // sideAngleLabel.setTranslateY(interact.getTranslateY() + interact.getSwing().getEndY()- 24);
+        // sideAngleLabel.setTranslateX(interact.getTranslateX() + interact.getSwing().getEndX() - 18);
+        // sideAngleLabel.setTranslateY(interact.getTranslateY() + interact.getSwing().getEndY()- 24);
         sideAngleLabel.layoutXProperty().bind(interact.getCircle().centerXProperty());
         sideAngleLabel.layoutYProperty().bind(interact.getCircle().centerYProperty());
 
@@ -118,8 +114,8 @@ public class ASSLabels {
         sideLenLabel.getTransforms().addAll(rotate);
 
         //move along normal
-        sideLenLabel.setTranslateX(sideLenLabel.getTranslateX() + 24*Math.cos((interact.getData().getSwingAngle()+90)*Math.PI/180));
-        sideLenLabel.setTranslateY(sideLenLabel.getTranslateY() - 24*Math.sin((interact.getData().getSwingAngle()+90)*Math.PI/180));
+        sideLenLabel.setTranslateX(sideLenLabel.getTranslateX() + 24 * Math.cos((interact.getData().getSwingAngle() + 90) * Math.PI / 180));
+        sideLenLabel.setTranslateY(sideLenLabel.getTranslateY() - 24 * Math.sin((interact.getData().getSwingAngle() + 90) * Math.PI / 180));
 
         labels.add(sideLenLabel);
     }
@@ -139,7 +135,6 @@ public class ASSLabels {
 */
 
 
-
         //1st calculate midpoint of sideLen:
         double midX = 0.5 * (interact.getSwing().getEndX() - interact.getSwing().getStartX());
         double midY = 0.5 * (interact.getSwing().getEndY() - interact.getSwing().getStartY());
@@ -152,7 +147,7 @@ public class ASSLabels {
         //calculate swing's current angle
         double deltaY = interact.getSwing().getEndY() - interact.getSwing().getStartY();
         double deltaX = interact.getSwing().getEndX() - interact.getSwing().getStartX();
-        double swingCurrentAngle = Math.atan(deltaY/deltaX) * 180 / Math.PI;
+        double swingCurrentAngle = Math.atan(deltaY / deltaX) * 180 / Math.PI;
 
 
         Rotate rotate = new Rotate(swingCurrentAngle,
@@ -161,8 +156,8 @@ public class ASSLabels {
         swingLenLabel.getTransforms().addAll(rotate);
 
         //move along normal
-       swingLenLabel.setTranslateX(swingLenLabel.getTranslateX() + 24*Math.cos((swingCurrentAngle+90)*Math.PI/180));
-      swingLenLabel.setTranslateY(swingLenLabel.getTranslateY() - 30*Math.sin((swingCurrentAngle+90)*Math.PI/180));
+        swingLenLabel.setTranslateX(swingLenLabel.getTranslateX() + 24 * Math.cos((swingCurrentAngle + 90) * Math.PI / 180));
+        swingLenLabel.setTranslateY(swingLenLabel.getTranslateY() - 30 * Math.sin((swingCurrentAngle + 90) * Math.PI / 180));
 
 
         labels.add(swingLenLabel);
@@ -185,7 +180,7 @@ public class ASSLabels {
         return labels;
     }
 
-    public void upDateSwingLenLabel(){
+    public void upDateSwingLenLabel() {
 
         //1st calculate midpoint of sideLen:
         double midX = 0.5 * (interact.getSwing().getEndX() - interact.getSwing().getStartX());
@@ -199,7 +194,7 @@ public class ASSLabels {
         //calculate swing's current angle
         double deltaY = interact.getSwing().getEndY() - interact.getSwing().getStartY();
         double deltaX = interact.getSwing().getEndX() - interact.getSwing().getStartX();
-        double swingCurrentAngle = Math.atan(deltaY/deltaX) * 180 / Math.PI;
+        double swingCurrentAngle = Math.atan(deltaY / deltaX) * 180 / Math.PI;
 
 /*
         Rotate rotate = new Rotate(swingCurrentAngle,
@@ -208,8 +203,8 @@ public class ASSLabels {
         swingLenLabel.getTransforms().addAll(rotate);
 */
         //move along normal
-        swingLenLabel.setTranslateX(swingLenLabel.getTranslateX() + 24*Math.cos((swingCurrentAngle+90)*Math.PI/180));
-        swingLenLabel.setTranslateY(swingLenLabel.getTranslateY() - 30*Math.sin((swingCurrentAngle+90)*Math.PI/180));
+        swingLenLabel.setTranslateX(swingLenLabel.getTranslateX() + 24 * Math.cos((swingCurrentAngle + 90) * Math.PI / 180));
+        swingLenLabel.setTranslateY(swingLenLabel.getTranslateY() - 30 * Math.sin((swingCurrentAngle + 90) * Math.PI / 180));
 
 
         labels.add(swingLenLabel);
