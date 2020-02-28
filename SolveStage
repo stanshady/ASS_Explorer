@@ -10,280 +10,221 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-//displays the data and hopefully
-//solved triangles and hopefully
-//reason for numSolutions value.
+// Displays the solution(s) in a new stage: Diagnosis, Values, Drawing
+// Should add functionality that it closes with the app as well as closes
+// whenever a second SolveStage opens.
+// Does not interact with ASSLabels.  All Labels are made/updated locally.
 public class SolveStage {
 
-    private static ASSInteract interact;
+    private Pane layout;
 
-    public static void display(ASSInteract mYinteract) {
+    // We need interact for its data and lines.
+    private ASSInteract interact;
+
+    private int numSolutions;
+
+    // numSolutions and reason.
+    private Text diagnosis;
+
+    // Lines taken from interact. Ultimately added to PaneLongTriangle and Short
+    private Line sideLong, sideShort, swingLong, swingShort, longGreen, shortGreen;
+
+    // Displays the solution data.
+    private Text textShortData, textLongData;
+
+    // Store the acute and obtuse triangles respectively.
+    private Pane paneLongTriangle, paneShortTriangle;
+
+    // VBoxes store the textSolution and paneTriangle
+    private VBox vBoxLong, vBoxShort;
+
+    // Only used when numSolutions == 2.  Stores both VBoxes
+    private HBox hBoxSolutions;
+
+    private Label labelAngleSideLong, labelAngleSideShort,
+            labelAngleSwingLong, labelAngleSwingShort,
+            labelAngleBaseLong, labelAngleBaseShort;
+
+    SolveStage(ASSInteract interact) {
+        this.interact = interact;
+
         Stage stage = new Stage();
         stage.setTitle("ASS Solution");
 
-
-        interact = mYinteract;
-
-        Pane layout = new Pane();
-        layout.setPadding(new Insets(0, 20, 20, 0));
-        //layout.setPrefSize(800,600);
-
-
-        BackgroundFill background_fill = new BackgroundFill(Color.AZURE,
-                CornerRadii.EMPTY, Insets.EMPTY);
-        Background background = new Background(background_fill);
-        layout.setBackground(background);
-
-
-        String solutionText = "";
-        int numSolutions = interact.getData().getNumSolutions();
-
-        switch (numSolutions) {
-            case 0:
-                solutionText = interact.getData().solutionText0();
-                break;
-            case 1:
-                solutionText = interact.getData().solutionTextLong();
-                break;
-           // case 2:
-              //  solutionText = interact.getData().toString();
-                //break;
-            default:
-                break;
-        }
-
-
-        //testing
-        Text diagnosis = new Text(interact.getData().diagnosis());
-
-        //Text solution = new Text(solutionText);
-        diagnosis.setStyle("-fx-font-size:16");
-        diagnosis.setTranslateX(20);
-        diagnosis.setTranslateY(20);
-
-
-
-        //build the triangles to display
-        Line tempSide = new Line(interact.getSide().getStartX(),
-                interact.getSide().getStartY(),
-                interact.getSide().getEndX(),
-                interact.getSide().getEndY());
-        tempSide.setStroke(Color.BLUE);
-        tempSide.setStrokeWidth(3);
-
-        Line tempLongGreen = new Line(interact.getLongGreen().getStartX(),
-                interact.getLongGreen().getStartY(),
-                interact.getLongGreen().getEndX(),
-                interact.getLongGreen().getEndY());
-        tempLongGreen.setStroke(Color.GREEN);
-        tempLongGreen.setStrokeWidth(3);
-
-        Line tempSwing = new Line(interact.getSwing().getStartX(),
-                interact.getSwing().getStartY(),
-                tempLongGreen.getEndX(),
-                tempLongGreen.getEndY());
-        tempSwing.setStrokeWidth(3);
-        tempSwing.setStroke(Color.RED);
-
-        Pane longTrianglePane = new Pane();
-        longTrianglePane.getChildren().addAll(tempSide, tempLongGreen, tempSwing);
-
-
-        Line tempSideShort = new Line(interact.getSide().getStartX(),
-                interact.getSide().getStartY(),
-                interact.getSide().getEndX(),
-                interact.getSide().getEndY());
-        tempSideShort.setStroke(Color.BLUE);
-        tempSideShort.setStrokeWidth(3);
-
-        Line tempShortGreen = new Line(interact.getShortGreen().getStartX(),
-                interact.getShortGreen().getStartY(),
-                interact.getShortGreen().getEndX(),
-                interact.getShortGreen().getEndY());
-        tempShortGreen.setStroke(Color.GREEN);
-        tempShortGreen.setStrokeWidth(3);
-
-        Line tempSwingShort = new Line(interact.getSwing().getStartX(),
-                interact.getSwing().getStartY(),
-                tempShortGreen.getEndX(),
-                tempShortGreen.getEndY());
-        tempSwingShort.setStrokeWidth(3);
-        tempSwingShort.setStroke(Color.RED);
-
-        Pane shortTrianglePane = new Pane();
-        shortTrianglePane.getChildren().addAll(tempSideShort, tempShortGreen, tempSwingShort);
-
-        VBox vBoxShort;
-        VBox vBoxLong;
-        HBox hBoxSolutions;
-
-        if (numSolutions == 1) {
-            vBoxLong = new VBox();
-            Text textLongData = new Text(interact.getData().solutionTextLong());
-            textLongData.setStyle("-fx-font-size:24");
-            textLongData.setTranslateX(20);
-            textLongData.setTranslateY(30);
-            vBoxLong.getChildren().addAll(diagnosis,textLongData);
-
-            //VBox vBox1Solutions = new VBox();
-            //vBox1Solutions.setSpacing(50);
-            //vBox1Solutions.getChildren().addAll(diagnosis,vBoxLong);
-
-
-            Label swingAngleLabel = new Label("A");
-            swingAngleLabel.setFont(new Font(20));
-            swingAngleLabel.setTranslateX(tempLongGreen.getStartX() - 18);
-            swingAngleLabel.setTranslateY(tempLongGreen.getStartY()-12);
-
-            Label baseAngleLabel = new Label("C");
-            baseAngleLabel.setFont(new Font(20));
-            baseAngleLabel.setTranslateX(tempSwing.getStartX()-6);
-            baseAngleLabel.setTranslateY(tempSwing.getStartY()-30);
-
-            Label sideAngleLabel = new Label("B");
-            sideAngleLabel.setFont(new Font(20));
-            sideAngleLabel.setTranslateX(tempLongGreen.getEndX() + 6);
-            sideAngleLabel.setTranslateY(tempLongGreen.getEndY()-12);
-
-
-            layout.getChildren().addAll(swingAngleLabel,baseAngleLabel,sideAngleLabel,vBoxLong,longTrianglePane);
-
-            //testing
-           // Text test = new Text(solutionText);
-           // test.setLayoutX(20);
-           // test.setLayoutY(20);
-           // test.setStyle("-fx-font-size:16");
-
-            //not testing
-           // hBoxSolutions.getChildren().addAll(longTrianglePane);
-        }
-        else if (numSolutions == 2) {
-
-            layout.setMaxHeight(600);
-
-            Label swingAngleLabel = new Label("A");
-            swingAngleLabel.setFont(new Font(20));
-            swingAngleLabel.setTranslateX(tempLongGreen.getStartX() - 18);
-            swingAngleLabel.setTranslateY(tempLongGreen.getStartY()-12);
-
-            Label baseAngleLabel = new Label("C");
-            baseAngleLabel.setFont(new Font(20));
-            baseAngleLabel.setTranslateX(tempSwing.getStartX()-6);
-            baseAngleLabel.setTranslateY(tempSwing.getStartY()-30);
-
-            Label sideAngleLabel = new Label("B");
-            sideAngleLabel.setFont(new Font(20));
-            sideAngleLabel.setTranslateX(tempLongGreen.getEndX() + 6);
-            sideAngleLabel.setTranslateY(tempLongGreen.getEndY()-12);
-            longTrianglePane.getChildren().addAll( sideAngleLabel,baseAngleLabel,swingAngleLabel);
-
-            //testing
-            longTrianglePane.setTranslateY(-200);
-
-
-                vBoxLong = new VBox();
-                Text textLongData = new Text(interact.getData().solutionTextLong());
-                textLongData.setStyle("-fx-font-size:24");
-                textLongData.setTranslateX(20);
-                vBoxLong.getChildren().addAll(diagnosis,textLongData,longTrianglePane);
-
-            Label swingAngleLabelShort = new Label("A");
-            swingAngleLabelShort.setFont(new Font(20));
-            swingAngleLabelShort.setTranslateX(tempShortGreen.getStartX() - 18);
-            swingAngleLabelShort.setTranslateY(tempShortGreen.getStartY()-12);
-
-            Label baseAngleLabelShort = new Label("C");
-            baseAngleLabelShort.setFont(new Font(20));
-            baseAngleLabelShort.setTranslateX(tempSwing.getStartX()-6);
-            baseAngleLabelShort.setTranslateY(tempSwing.getStartY()-30);
-
-            Label sideAngleLabelShort = new Label("B");
-            sideAngleLabelShort.setFont(new Font(20));
-            sideAngleLabelShort.setTranslateX(tempShortGreen.getEndX() + 6);
-            sideAngleLabelShort.setTranslateY(tempShortGreen.getEndY()-12);
-            shortTrianglePane.getChildren().addAll( sideAngleLabelShort,baseAngleLabelShort,swingAngleLabelShort);
-
-            //testing
-            shortTrianglePane.setTranslateY(-200);
-
-
-
-
-                vBoxShort = new VBox();
-                Text textShortData = new Text(interact.getData().solutionTextShort());
-                textShortData.setStyle("-fx-font-size:24");
-                vBoxShort.getChildren().addAll(diagnosis,textShortData,shortTrianglePane);
-
-
-
-
-                hBoxSolutions = new HBox();
-                hBoxSolutions.setSpacing(50);
-
-                hBoxSolutions.getChildren().addAll(vBoxLong,vBoxShort);
-
-                VBox vBox2Solutions = new VBox();
-                vBox2Solutions.setSpacing(50);
-                vBox2Solutions.getChildren().addAll(diagnosis,hBoxSolutions);
-
-
-
-            layout.getChildren().addAll(vBox2Solutions);
-
-                //layout.getChildren().addAll(diagnosis,hBoxSolutions);
-            }
-        //testing
-        else //(numSolutions == 0)
-            layout.getChildren().addAll(diagnosis);
-
-
-        //layout.getChildren().addAll(diagnosis, hBoxSolutions);
-
+        // Essential method, builds everything.
+        setUpLayout();
 
         Scene scene = new Scene(layout);
-
-
         stage.setScene(scene);
-       // stage.setMaxHeight(600);
         stage.show();
     }
 
+    public void setUpLayout() {
+        layout = new Pane();
+        layout.setPadding(new Insets(0, 20, 20, 0));
 
-    //Lots of work... idea is to animate solutions.  Just beginning
-    private static Pane animateSwingLessThanAltitude(){
-        Pane pane = new Pane();
+        Background background = new Background(new BackgroundFill(Color.AZURE,
+                CornerRadii.EMPTY, Insets.EMPTY));
+        layout.setBackground(background);
 
-        Line tempSide = new Line(interact.getSide().getStartX(),
+        numSolutions = interact.getData().getNumSolutions();
+
+        // Initializes diagnosis.  Does NOT add it to any parent yet.
+        setUpDiagnosis();
+
+        // Initializes both paneTriangles (along with all their lines) and adds to layout.
+        // Labels are added later.
+        setUpTriangles();
+
+        if (numSolutions == 1) {
+            // textData contains the angle and side values of the solution
+            textLongData = new Text(interact.getData().solutionTextLong());
+            textLongData.setStyle("-fx-font-size:24");
+            textLongData.setTranslateX(20);
+            textLongData.setTranslateY(30);
+
+            vBoxLong = new VBox();
+            vBoxLong.getChildren().addAll(diagnosis, textLongData);
+
+            // Initializes the angle labels and adds them to paneLongTriangle
+            setUpLabelsAnglesLong();
+
+            layout.getChildren().addAll(vBoxLong, paneLongTriangle);
+
+        } else if (numSolutions == 2) {
+
+            // why?
+            layout.setMaxHeight(600);
+
+            setUpLabelsAnglesLong();
+            paneLongTriangle.setTranslateY(-200);
+
+            textLongData = new Text(interact.getData().solutionTextLong());
+            textLongData.setStyle("-fx-font-size:24");
+            textLongData.setTranslateX(20);
+
+            vBoxLong = new VBox();
+            vBoxLong.getChildren().addAll(diagnosis, textLongData, paneLongTriangle);
+
+            setUpLabelsAnglesShort();
+            paneShortTriangle.setTranslateY(-200);
+
+            textShortData = new Text(interact.getData().solutionTextShort());
+            textShortData.setStyle("-fx-font-size:24");
+
+            vBoxShort = new VBox();
+            vBoxShort.getChildren().addAll(diagnosis, textShortData, paneShortTriangle);
+
+            hBoxSolutions = new HBox();
+            hBoxSolutions.setSpacing(50);
+            hBoxSolutions.getChildren().addAll(vBoxLong, vBoxShort);
+
+            // Holds diagnosis and then everything else below it in hBoxSolutions
+            VBox vBox2Solutions = new VBox();
+            vBox2Solutions.setSpacing(50);
+            vBox2Solutions.getChildren().addAll(diagnosis, hBoxSolutions);
+
+            layout.getChildren().addAll(vBox2Solutions);
+        }
+
+        else //(numSolutions == 0)
+            layout.getChildren().addAll(diagnosis);
+    }
+
+    // Initializes and adds to layout both paneTriangles and their lines.
+    public void setUpTriangles(){
+        sideLong = new Line(interact.getSide().getStartX(),
                 interact.getSide().getStartY(),
                 interact.getSide().getEndX(),
                 interact.getSide().getEndY());
-        tempSide.setStroke(Color.BLUE);
-        tempSide.setStrokeWidth(3);
+        sideLong.setStroke(Color.BLUE);
+        sideLong.setStrokeWidth(3);
 
-        Line tempLongGreen = new Line(interact.getLongGreen().getStartX(),
+        longGreen = new Line(interact.getLongGreen().getStartX(),
                 interact.getLongGreen().getStartY(),
                 interact.getLongGreen().getEndX(),
                 interact.getLongGreen().getEndY());
-        tempLongGreen.setStroke(Color.GREEN);
-        tempLongGreen.setStrokeWidth(3);
+        longGreen.setStroke(Color.GREEN);
+        longGreen.setStrokeWidth(3);
 
-        Line tempSwing = new Line(interact.getSwing().getStartX(),
+        swingLong = new Line(interact.getSwing().getStartX(),
                 interact.getSwing().getStartY(),
-                tempLongGreen.getEndX(),
-                tempLongGreen.getEndY());
-        tempSwing.setStrokeWidth(3);
-        tempSwing.setStroke(Color.RED);
+                longGreen.getEndX(),
+                longGreen.getEndY());
+        swingLong.setStrokeWidth(3);
+        swingLong.setStroke(Color.RED);
+
+        paneLongTriangle = new Pane();
+        paneLongTriangle.getChildren().addAll(sideLong, longGreen, swingLong);
 
 
-      //  Timeline timeline = new Timeline();
-     //   KeyFrame keyFrame = new KeyFrame(Duration.millis(3000),
-     //           new KeyValue(rect.xProperty(),300));
-     //   timeline.getKeyFrames().addAll(keyFrame);
-     //   timeline.play();
+        sideShort = new Line(interact.getSide().getStartX(),
+                interact.getSide().getStartY(),
+                interact.getSide().getEndX(),
+                interact.getSide().getEndY());
+        sideShort.setStroke(Color.BLUE);
+        sideShort.setStrokeWidth(3);
 
-        return pane;
+        shortGreen = new Line(interact.getShortGreen().getStartX(),
+                interact.getShortGreen().getStartY(),
+                interact.getShortGreen().getEndX(),
+                interact.getShortGreen().getEndY());
+        shortGreen.setStroke(Color.GREEN);
+        shortGreen.setStrokeWidth(3);
+
+        swingShort = new Line(interact.getSwing().getStartX(),
+                interact.getSwing().getStartY(),
+                shortGreen.getEndX(),
+                shortGreen.getEndY());
+        swingShort.setStrokeWidth(3);
+        swingShort.setStroke(Color.RED);
+
+        paneShortTriangle = new Pane();
+        paneShortTriangle.getChildren().addAll(sideShort, shortGreen, swingShort);
     }
 
+    // Set up diagnosis.  Diagnosis is eventually added it to the top of the VBox
+    public void setUpDiagnosis() {
+        diagnosis = new Text(interact.getData().diagnosis());
+        diagnosis.setStyle("-fx-font-size:16");
+        diagnosis.setTranslateX(20);
+        diagnosis.setTranslateY(20);
+    }
 
+    public void setUpLabelsAnglesLong() {
+        labelAngleSwingLong = new Label("A");
+        labelAngleSwingLong.setFont(new Font(20));
+        labelAngleSwingLong.setTranslateX(longGreen.getStartX() - 18);
+        labelAngleSwingLong.setTranslateY(longGreen.getStartY() - 12);
 
+        labelAngleBaseLong = new Label("C");
+        labelAngleBaseLong.setFont(new Font(20));
+        labelAngleBaseLong.setTranslateX(swingLong.getStartX() - 6);
+        labelAngleBaseLong.setTranslateY(swingLong.getStartY() - 30);
+
+        labelAngleSideLong = new Label("B");
+        labelAngleSideLong.setFont(new Font(20));
+        labelAngleSideLong.setTranslateX(longGreen.getEndX() + 6);
+        labelAngleSideLong.setTranslateY(longGreen.getEndY() - 12);
+
+        paneLongTriangle.getChildren().addAll(labelAngleSideLong, labelAngleBaseLong, labelAngleSwingLong);
+    }
+
+    public void setUpLabelsAnglesShort() {
+        labelAngleSwingShort = new Label("A");
+        labelAngleSwingShort.setFont(new Font(20));
+        labelAngleSwingShort.setTranslateX(shortGreen.getStartX() - 18);
+        labelAngleSwingShort.setTranslateY(shortGreen.getStartY() - 12);
+
+        labelAngleBaseShort = new Label("C");
+        labelAngleBaseShort.setFont(new Font(20));
+        labelAngleBaseShort.setTranslateX(swingLong.getStartX() - 6);
+        labelAngleBaseShort.setTranslateY(swingLong.getStartY() - 30);
+
+        labelAngleSideShort = new Label("B");
+        labelAngleSideShort.setFont(new Font(20));
+        labelAngleSideShort.setTranslateX(shortGreen.getEndX() + 6);
+        labelAngleSideShort.setTranslateY(shortGreen.getEndY() - 12);
+        paneShortTriangle.getChildren().addAll(labelAngleSideShort, labelAngleBaseShort, labelAngleSwingShort);
+    }
 }
