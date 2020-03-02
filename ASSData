@@ -1,6 +1,4 @@
-package ASSExplorer;
-
-import java.text.DecimalFormat;
+package ASS;
 
 // Stores data (numSolutions, sides, angles, altitude, etc) for ASS
 // All data is UNSCALED!!!
@@ -88,106 +86,6 @@ public class ASSData {
 
         baseLenLong = Math.sin(baseAngleLong_Radian) * swingLen / Math.sin(SWING_ANGLE_RADIAN);
         baseLenShort = Math.sin(baseAngleShort_Radian) * swingLen / Math.sin(SWING_ANGLE_RADIAN);
-    }
-
-    //returns reason for numSolutions
-    public String diagnosis() {
-        //obtuse or rt cases
-        if (swingAngle >= 90) {
-            if (numSolutions == 0)
-                return numSolutions + " triangles.\n" +
-                        "Angle is not acute but the Opposite Side is too short.\n" +
-                        "A >= 90 but a <= b";
-            else //numSolutions == 1
-                return numSolutions + " triangle.\n" +
-                        "Angle is not acute and the Opposite Side is long enough to reach.\n" +
-                        "A >= 90 and a > b";
-        } else { //swingAngle < 90
-            if (numSolutions == 0)
-                return numSolutions + " triangles.\n" +
-                        "Angle is acute but the opposite side is too short because it's less than the altitude.\n" +
-                        "A < 90 but a < altitude: a < b*sin(A)";
-            else if (numSolutions == 1) {
-                if (Math.abs(swingLen - altitudeLen) <= 0.00001) //close enough?
-                    return numSolutions + " triangle.\n" +
-                            "Angle is acute and the opposite side is equal to the altitude. It is a right triangle.\n" +
-                            "A < 90 and a = altitude: a = b*sin(A)";
-                else //swingLen > sideLen
-                    return numSolutions + " triangle.\n" +
-                            "Angle is acute and the opposite side is greater than or equal to the adjacent side.\n" +
-                            "A < 90 and a >= b";
-            } else //numSolutions == 2 {
-                return numSolutions + " triangles.\n" +
-                        "Angle is acute and the opposite side is greater than the altitude but less than the adjacent side.\n" +
-                        "A < 90 and b*sin(A) < a < b.";
-        }
-    }
-
-    // Used in SolveStage
-    public String solutionTextLong() {
-        String ret = "";
-
-        if (swingAngle == 90)
-            ret += "Right Triangle:\n";
-        else if (swingAngle > 90)
-            ret += "Obtuse Triangle:\n";
-        else
-            ret += "Acute Triangle:\n";
-
-        ret += "A = " + formatDecimals(swingAngle) + ", " +
-                "C = " + formatDecimals(baseAngleLong) + ", " +
-                "B = " + formatDecimals(sideAngleLong) + "\n";
-        ret += "a = " + formatDecimals(swingLen) + ", " +
-                "c = " + formatDecimals(baseLenLong) + ", " +
-                "b = " + formatDecimals(sideLen) + "\n";
-
-        return ret;
-    }
-
-    // Only used when numSolutions == 2
-    // Used in SolveStage
-    public String solutionTextShort() {
-        String ret = "";
-
-        ret += "Obtuse Triangle:\n" +
-                "A = " + formatDecimals(swingAngle) + ", " +
-                "C = " + formatDecimals(baseAngleShort) + ", " +
-                "B = " + formatDecimals(sideAngleShort) + "\n";
-        ret += "a = " + formatDecimals(swingLen) + ", " +
-                "c = " + formatDecimals(baseLenShort) + ", " +
-                "b = " + formatDecimals(sideLen) + "\n";
-
-        return ret;
-    }
-
-    public String formatDecimals(double num) {
-        DecimalFormat df = new DecimalFormat("#.###");
-        return df.format(num);
-    }
-
-    // never used
-    public String toString() {
-        String ret = "";
-
-        ret += "numSolutions = " + numSolutions + ", altitudeLen = " + formatDecimals(altitudeLen) + "\n";
-        ret += "********************\n";
-        ret += "Acute Triangle:\n" +
-                "A = " + formatDecimals(swingAngle) + ", " +
-                "C = " + formatDecimals(baseAngleLong) + ", " +
-                "B = " + formatDecimals(sideAngleLong) + "\n";
-        ret += "a = " + formatDecimals(swingLen) + ", " +
-                "c = " + formatDecimals(baseLenLong) + ", " +
-                "b = " + formatDecimals(sideLen) + "\n";
-        ret += "********************\n";
-        ret += "Obtuse Triangle: \n";
-        ret += "A = " + formatDecimals(swingAngle) + ", " +
-                "C = " + formatDecimals(baseAngleShort) + ", " +
-                "B = " + formatDecimals(sideAngleShort) + "\n";
-        ret += "a = " + formatDecimals(swingLen) + ", " +
-                "c = " + formatDecimals(baseLenShort) + ", " +
-                "b = " + formatDecimals(sideLen) + "\n";
-        ret += "********************\n";
-        return ret;
     }
 
     // Getters.  Actually important here.
