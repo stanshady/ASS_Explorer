@@ -1,4 +1,4 @@
-package ASSExplorer;
+package ASS;
 
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
@@ -102,19 +102,19 @@ public class ASSInteract extends Pane {
 
         // Use 80% so there is buffer.
         // Use max(xWidth,yWidth) to scale window to make sure everything fits.
-        scaleFactor = 0.8*WIDTH / Math.max(xWidth, yWidth);
+        scaleFactor = 0.8 * WIDTH / Math.max(xWidth, yWidth);
 
         // Position base so that swing can rotate completely.
         // Want to improve in the future especially for obtuse case.
         base = new Line();
         if (xMin == 0)
-            base.setStartX(WIDTH*0.1);
+            base.setStartX(WIDTH * 0.1);
         else
-            base.setStartX(-1* xMin * scaleFactor+WIDTH*0.1);
+            base.setStartX(-1 * xMin * scaleFactor + WIDTH * 0.1);
         if (yMin == 0)
-            base.setStartY(HEIGHT*0.8);
+            base.setStartY(HEIGHT * 0.8);
         else
-            base.setStartY(HEIGHT + yMin * scaleFactor-HEIGHT*0.2);
+            base.setStartY(HEIGHT + yMin * scaleFactor - HEIGHT * 0.2);
         base.setEndX(WIDTH);
         base.setEndY(base.getStartY());
 
@@ -390,8 +390,7 @@ public class ASSInteract extends Pane {
             circle.setCenterY(shortGreen.getEndY());
             shortGreen.setOpacity(1);
             base.setOpacity(0);
-        }
-        else {
+        } else {
             longGreen.setOpacity(0);
             base.setOpacity(1);
         }
