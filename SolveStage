@@ -1,7 +1,8 @@
-package ASSExplorer;
+package ASS;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -9,6 +10,8 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
+import java.text.DecimalFormat;
 
 // Displays the solution(s) in a new stage: Diagnosis, Values, Drawing
 // Should add functionality that it closes with the app as well as closes
@@ -51,12 +54,22 @@ public class SolveStage {
             labelSwingLong, labelSwingShort,
             labelBaseLong, labelBaseShort;
 
+    // Strings used in angle and side labels
+    private String stringAngleSwing, stringAngleSide, stringAngleBase,
+            stringSwing, stringSide, stringBase;
 
-    SolveStage(ASSInteract interact) {
+    // Use their data to determine the appropriate strings
+    private ChoiceBox choiceBoxAngle, choiceBoxSide, choiceBoxSwing;
+
+
+    SolveStage(ASSInteract interact, ChoiceBox angle, ChoiceBox side, ChoiceBox swing) {
         this.interact = interact;
+        choiceBoxAngle = angle;
+        choiceBoxSide = side;
+        choiceBoxSwing = swing;
 
         Stage stage = new Stage();
-        stage.setTitle("ASS Solution");
+        stage.setTitle("Solution");
 
         // Essential method, builds everything.
         setUpLayout();
@@ -76,7 +89,11 @@ public class SolveStage {
 
         numSolutions = interact.getData().getNumSolutions();
 
+        // Initializes side and angle strings used in labels
+        setUpStrings();
+
         // Initializes diagnosis.  Does NOT add it to any parent yet.
+        // Has to be called after setUpStrings to avoid nulls.
         setUpDiagnosis();
 
         // Initializes both paneTriangles (along with all their lines) and adds to layout.
@@ -92,8 +109,7 @@ public class SolveStage {
         setUpLabelsAnglesShort();
 
         if (numSolutions == 1) {
-            // textData contains the angle and side values of the solution
-            textLongData = new Text(interact.getData().solutionTextLong());
+            textLongData = new Text(solutionTextLong());
             textLongData.setStyle("-fx-font-size:24");
             textLongData.setTranslateX(20);
             textLongData.setTranslateY(30);
@@ -105,23 +121,21 @@ public class SolveStage {
             layout.getChildren().addAll(vBoxLong, paneLongTriangle);
 
         } else if (numSolutions == 2) {
-
             // why?
             layout.setMaxHeight(600);
 
             paneLongTriangle.setTranslateY(-200);
 
-            textLongData = new Text(interact.getData().solutionTextLong());
+            textLongData = new Text(solutionTextLong());
             textLongData.setStyle("-fx-font-size:24");
             textLongData.setTranslateX(20);
 
             vBoxLong = new VBox();
             vBoxLong.getChildren().addAll(diagnosis, textLongData, paneLongTriangle);
 
-
             paneShortTriangle.setTranslateY(-200);
 
-            textShortData = new Text(interact.getData().solutionTextShort());
+            textShortData = new Text(solutionTextShort());
             textShortData.setStyle("-fx-font-size:24");
 
             vBoxShort = new VBox();
@@ -140,6 +154,7 @@ public class SolveStage {
         } else //(numSolutions == 0)
             layout.getChildren().addAll(diagnosis);
     }
+
 
     // Initializes and adds to layout both paneTriangles and their lines.
     public void setUpTriangles() {
@@ -195,24 +210,24 @@ public class SolveStage {
 
     // Set up diagnosis.  Diagnosis is eventually added it to the top of the VBox
     public void setUpDiagnosis() {
-        diagnosis = new Text(interact.getData().diagnosis());
+        diagnosis = new Text(diagnosis());
         diagnosis.setStyle("-fx-font-size:16");
         diagnosis.setTranslateX(20);
         diagnosis.setTranslateY(20);
     }
 
     public void setUpLabelsAnglesLong() {
-        labelAngleSwingLong = new Label("A");
+        labelAngleSwingLong = new Label(stringAngleSwing);
         labelAngleSwingLong.setFont(new Font(20));
         labelAngleSwingLong.setTranslateX(longGreen.getStartX() - 18);
         labelAngleSwingLong.setTranslateY(longGreen.getStartY() - 12);
 
-        labelAngleBaseLong = new Label("C");
+        labelAngleBaseLong = new Label(stringAngleBase);
         labelAngleBaseLong.setFont(new Font(20));
         labelAngleBaseLong.setTranslateX(swingLong.getStartX() - 6);
         labelAngleBaseLong.setTranslateY(swingLong.getStartY() - 30);
 
-        labelAngleSideLong = new Label("B");
+        labelAngleSideLong = new Label(stringAngleSide);
         labelAngleSideLong.setFont(new Font(20));
         labelAngleSideLong.setTranslateX(longGreen.getEndX() + 6);
         labelAngleSideLong.setTranslateY(longGreen.getEndY() - 12);
@@ -221,17 +236,17 @@ public class SolveStage {
     }
 
     public void setUpLabelsAnglesShort() {
-        labelAngleSwingShort = new Label("A");
+        labelAngleSwingShort = new Label(stringAngleSwing);
         labelAngleSwingShort.setFont(new Font(20));
         labelAngleSwingShort.setTranslateX(shortGreen.getStartX() - 18);
         labelAngleSwingShort.setTranslateY(shortGreen.getStartY() - 12);
 
-        labelAngleBaseShort = new Label("C");
+        labelAngleBaseShort = new Label(stringAngleBase);
         labelAngleBaseShort.setFont(new Font(20));
         labelAngleBaseShort.setTranslateX(swingLong.getStartX() - 6);
         labelAngleBaseShort.setTranslateY(swingLong.getStartY() - 30);
 
-        labelAngleSideShort = new Label("B");
+        labelAngleSideShort = new Label(stringAngleSide);
         labelAngleSideShort.setFont(new Font(20));
         labelAngleSideShort.setTranslateX(shortGreen.getEndX() + 6);
         labelAngleSideShort.setTranslateY(shortGreen.getEndY() - 12);
@@ -239,7 +254,7 @@ public class SolveStage {
     }
 
     public void setUpLabelSidesShort() {
-        labelSwingShort = new Label("a");
+        labelSwingShort = new Label(stringSwing);
         labelSwingShort.setFont(new Font(20));
 
         // Find the midpoint.
@@ -258,8 +273,7 @@ public class SolveStage {
         labelSwingShort.setTranslateX(labelSwingShort.getTranslateX() + 6 * Math.cos(normal));
         labelSwingShort.setTranslateY(labelSwingShort.getTranslateY() - 6 * Math.sin(normal));
 
-
-        labelSideShort = new Label("b");
+        labelSideShort = new Label(stringSide);
         labelSideShort.setFont(new Font(20));
         // Find the midpoint.
         double sideMidX = (sideShort.getStartX() + sideShort.getEndX()) * 0.5;
@@ -273,21 +287,18 @@ public class SolveStage {
         labelSideShort.setTranslateX(labelSideShort.getTranslateX() + 30 * Math.cos(normal));
         labelSideShort.setTranslateY(labelSideShort.getTranslateY() - 30 * Math.sin(normal));
 
-
-        labelBaseShort = new Label("c");
+        labelBaseShort = new Label(stringBase);
         labelBaseShort.setFont(new Font(20));
         double baseMidX = (shortGreen.getStartX() + shortGreen.getEndX()) * 0.5;
         double baseMidY = (shortGreen.getStartY() + shortGreen.getEndY()) * 0.5;
         labelBaseShort.setTranslateX(baseMidX);
         labelBaseShort.setTranslateY(baseMidY + 6);
 
-
         paneShortTriangle.getChildren().addAll(labelSwingShort, labelSideShort, labelBaseShort);
     }
 
-
     public void setUpLabelSidesLong() {
-        labelSwingLong = new Label("a");
+        labelSwingLong = new Label(stringSwing);
         labelSwingLong.setFont(new Font(20));
         // Find the midpoint.
         double swingMidX = (swingLong.getStartX() + swingLong.getEndX()) * 0.5;
@@ -301,8 +312,7 @@ public class SolveStage {
         labelSwingLong.setTranslateX(labelSwingLong.getTranslateX() + 24 * Math.cos(normal));
         labelSwingLong.setTranslateY(labelSwingLong.getTranslateY() - 24 * Math.sin(normal));
 
-
-        labelSideLong = new Label("b");
+        labelSideLong = new Label(stringSide);
         labelSideLong.setFont(new Font(20));
         double sideMidX = (sideLong.getStartX() + sideLong.getEndX()) * 0.5;
         double sideMidY = (sideLong.getStartY() + sideLong.getEndY()) * 0.5;
@@ -315,15 +325,13 @@ public class SolveStage {
             normal = slope + Math.PI * 0.5;
             labelSideLong.setTranslateX(labelSideLong.getTranslateX() + 30 * Math.cos(normal));
             labelSideLong.setTranslateY(labelSideLong.getTranslateY() - 30 * Math.sin(normal));
-        }
-        else {
+        } else {
             normal = slope - Math.PI * 0.5;
             labelSideLong.setTranslateX(labelSideLong.getTranslateX() + 12 * Math.cos(normal));
             labelSideLong.setTranslateY(labelSideLong.getTranslateY() - 12 * Math.sin(normal));
         }
 
-
-        labelBaseLong = new Label("c");
+        labelBaseLong = new Label(stringBase);
         labelBaseLong.setFont(new Font(20));
         double baseMidX = (longGreen.getStartX() + longGreen.getEndX()) * 0.5;
         double baseMidY = (longGreen.getStartY() + longGreen.getEndY()) * 0.5;
@@ -331,5 +339,112 @@ public class SolveStage {
         labelBaseLong.setTranslateY(baseMidY + 6);
 
         paneLongTriangle.getChildren().addAll(labelSwingLong, labelSideLong, labelBaseLong);
+    }
+
+    // Initializes all the string data to be used by various setUp___Label()
+    public void setUpStrings() {
+        String[] lowerCase = {"a", "b", "c"};
+        String[] upperCase = {"A", "B", "C"};
+
+        stringAngleSwing = upperCase[choiceBoxSwing.getSelectionModel().selectedIndexProperty().getValue()];
+        stringAngleSide = upperCase[choiceBoxSide.getSelectionModel().selectedIndexProperty().getValue()];
+        stringAngleBase = upperCase[findBaseAngleLabelInt()];
+
+        stringSwing = lowerCase[choiceBoxSwing.getSelectionModel().selectedIndexProperty().getValue()];
+        stringSide = lowerCase[choiceBoxSide.getSelectionModel().selectedIndexProperty().getValue()];
+        stringBase = lowerCase[findBaseAngleLabelInt()];
+    }
+
+    public int findBaseAngleLabelInt() {
+        int sum = choiceBoxSwing.getSelectionModel().selectedIndexProperty().getValue() +
+                choiceBoxSide.getSelectionModel().selectedIndexProperty().getValue();
+        switch (sum) {
+            case 1:
+                return 2;
+            case 2:
+                return 1;
+            case 3:
+                return 0;
+            default:
+                return sum / 2;
+        }
+    }
+
+    //returns reason for numSolutions
+    public String diagnosis() {
+        //obtuse or rt cases
+        if (interact.getData().getSwingAngle() >= 90) {
+            if (numSolutions == 0)
+                return numSolutions + " triangles.\n" +
+                        "Angle is not acute but the Opposite Side is too short.\n" +
+                        stringAngleSwing + " >= 90 but " + stringSwing + " <= " + stringSide;
+            else //numSolutions == 1
+                return numSolutions + " triangle.\n" +
+                        "Angle is not acute and the Opposite Side is long enough to reach.\n" +
+                        stringAngleSwing + " >= 90 and " + stringSwing + " > " + stringSide;
+        } else { //swingAngle < 90
+            if (numSolutions == 0)
+                return numSolutions + " triangles.\n" +
+                        "Angle is acute but the opposite side is too short because it's less than the altitude.\n" +
+                        stringAngleSwing + " < 90 but " + stringSwing + " < altitude: " +
+                        stringSwing + " < " + stringSide + "*sin(" + stringAngleSwing + ") = " +
+                        formatDecimals(interact.getData().getAltitudeLen());
+            else if (numSolutions == 1) {
+                if (Math.abs(interact.getData().getSwingLen() - interact.getData().getAltitudeLen()) <= 0.00001) //close enough?
+                    return numSolutions + " triangle.\n" +
+                            "Angle is acute and the opposite side is equal to the altitude. It is a right triangle.\n" +
+                            stringAngleSwing + " < 90 and " + stringSwing + " = altitude: " + stringSwing + " = " +
+                            stringSide + "*sin(" + stringAngleSwing + ") = " +
+                            formatDecimals(interact.getData().getAltitudeLen());
+                else //swingLen > sideLen
+                    return numSolutions + " triangle.\n" +
+                            "Angle is acute and the opposite side is greater than or equal to the adjacent side.\n" +
+                            stringAngleSwing + " < 90 and " + stringSwing + " >= " + stringSide;
+            } else //numSolutions == 2 {
+                return numSolutions + " triangles.\n" +
+                        "Angle is acute and the opposite side is greater than the altitude but less than the adjacent side.\n" +
+                        stringAngleSwing + " < 90 and " + stringSide + "*sin(" + stringAngleSwing + ") = " +
+                        formatDecimals(interact.getData().getAltitudeLen()) + " < " + stringSwing + " < " + stringSide;
+        }
+    }
+
+    public String solutionTextLong() {
+        String ret = "";
+
+        if (interact.getData().getSwingAngle() == 90)
+            ret += "Right Triangle:\n";
+        else if (interact.getData().getSwingAngle() > 90)
+            ret += "Obtuse Triangle:\n";
+        else
+            ret += "Acute Triangle:\n";
+
+        ret += stringAngleSwing + " = " + formatDecimals(interact.getData().getSwingAngle()) + ", " +
+                stringAngleBase + " = " + formatDecimals(interact.getData().getBaseAngleLong()) + ", " +
+                stringAngleSide + " = " + formatDecimals(interact.getData().getSideAngleLong()) + "\n";
+        ret += stringSwing + " = " + formatDecimals(interact.getData().getSwingLen()) + ", " +
+                stringBase + " = " + formatDecimals(interact.getData().getBaseLenLong()) + ", " +
+                stringSide + " = " + formatDecimals(interact.getData().getSideLen()) + "\n";
+
+        return ret;
+    }
+
+    // Only used when numSolutions == 2
+    public String solutionTextShort() {
+        String ret = "";
+
+        ret += "Obtuse Triangle:\n" +
+                stringAngleSwing + " = " + formatDecimals(interact.getData().getSwingAngle()) + ", " +
+                stringAngleBase + " = " + formatDecimals(interact.getData().getBaseAngleShort()) + ", " +
+                stringAngleSide + " = " + formatDecimals(interact.getData().getSideAngleShort()) + "\n";
+        ret += stringSwing + " = " + formatDecimals(interact.getData().getSwingLen()) + ", " +
+                stringBase + " = " + formatDecimals(interact.getData().getBaseLenShort()) + ", " +
+                stringSide + " = " + formatDecimals(interact.getData().getSideLen()) + "\n";
+
+        return ret;
+    }
+
+    public String formatDecimals(double num) {
+        DecimalFormat df = new DecimalFormat("#.###");
+        return df.format(num);
     }
 }
